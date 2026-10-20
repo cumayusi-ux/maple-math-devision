@@ -175,11 +175,12 @@
             font-weight: bold;
         }
 
+        /* 성공 / 실패(하락) 2가지 확률만 깔끔하게 표시 */
         .rates-box-compact {
             width: 100%;
-            font-size: 13px;
+            font-size: 14px;
             background: #eaeded;
-            padding: 6px 10px;
+            padding: 6px 14px;
             border-radius: 8px;
             display: flex;
             justify-content: space-around;
@@ -290,7 +291,7 @@
 </head>
 <body>
 
-    <h1>🍁 민형쌤과 함께하는 나눗셈 정복 (파괴 없음!) 🍁</h1>
+    <h1>🍁 민형쌤과 함께하는 나눗셈 정복 (안전 강화!) 🍁</h1>
 
     <div class="game-container">
         <!-- 1. 상단 숲속 화면 -->
@@ -301,7 +302,7 @@
         <!-- 2. 스타포스 가로형 배치 -->
         <div class="sf-window">
             <div class="sf-header">
-                <span>⚔️ 스타포스 장비 강화소 (최대 ★22성 / 파괴없음)</span>
+                <span>⚔️ 스타포스 장비 강화소 (최대 ★22성 / 파괴 없음)</span>
                 <span id="topStarBadge">★ 0성</span>
             </div>
 
@@ -317,10 +318,10 @@
                     <div class="stars-container" id="starsBox"></div>
                     <div class="stars-count-txt" id="starTxt">★ 0 / 22성</div>
 
+                    <!-- 성공 / 실패(하락) 확률만 깔끔하게 표시 -->
                     <div class="rates-box-compact">
-                        <span>성공: <b id="sucRate" style="color:#27ae60;">99.75%</b></span>
-                        <span>하락: <b id="dropRate" style="color:#e67e22;">0.25%</b></span>
-                        <span>파괴: <b id="desRate" style="color:#27ae60;">0% (안전)</b></span>
+                        <span>성공 확률: <b id="sucRate" style="color:#27ae60;">99.75%</b></span>
+                        <span>실패(하락): <b id="dropRate" style="color:#e67e22;">0.25%</b></span>
                     </div>
                 </div>
 
@@ -365,336 +366,10 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // 사용자 제공 썬데이메이플 기준 확률표 매핑 (파괴율 0%)
+        // 성공 확률 및 실패(하락) 확률표 적용
         function getRates(star) {
-            if (star >= MAX_STARS) return { success: 0, drop: 0, destroy: 0 };
+            if (star >= MAX_STARS) return { success: 0, drop: 0 };
 
             const rateTable = {
                 0:  { success: 99.75, drop: 0.25 },
-                1:  { success: 94.50, drop: 5.50 },
-                2:  { success: 89.25, drop: 10.75 },
-                3:  { success: 89.25, drop: 10.75 },
-                4:  { success: 84.00, drop: 16.00 },
-                5:  { success: 78.75, drop: 21.25 },
-                6:  { success: 73.50, drop: 26.50 },
-                7:  { success: 68.25, drop: 31.75 },
-                8:  { success: 63.00, drop: 37.00 },
-                9:  { success: 57.75, drop: 42.25 },
-                10: { success: 52.50, drop: 47.50 },
-                11: { success: 47.25, drop: 52.75 },
-                12: { success: 42.00, drop: 58.00 },
-                13: { success: 36.75, drop: 63.25 },
-                14: { success: 31.50, drop: 68.50 },
-                15: { success: 31.50, drop: 66.445 },
-                16: { success: 31.50, drop: 66.445 },
-                17: { success: 15.75, drop: 77.510 },
-                18: { success: 15.75, drop: 77.510 },
-                19: { success: 15.75, drop: 75.825 },
-                20: { success: 31.50, drop: 58.225 },
-                21: { success: 15.75, drop: 71.6125 },
-                22: { success: 15.75, drop: 67.40 }
-            };
-
-            let data = rateTable[star] || { success: 30, drop: 70 };
-            return { success: data.success, drop: data.drop, destroy: 0 };
-        }
-
-        // 22개 별 슬롯 (4-4-4-4-4-2)
-        function renderStars() {
-            const box = document.getElementById('starsBox');
-            box.innerHTML = '';
-            
-            const groupSizes = [4, 4, 4, 4, 4, 2];
-            let starIndex = 1;
-
-            groupSizes.forEach(size => {
-                let groupDiv = document.createElement('div');
-                groupDiv.className = 'star-group';
-
-                for (let i = 0; i < size; i++) {
-                    let span = document.createElement('span');
-                    span.className = 'star-slot' + (starIndex <= currentStar ? ' filled' : '');
-                    span.innerText = starIndex <= currentStar ? '★' : '☆';
-                    groupDiv.appendChild(span);
-                    starIndex++;
-                }
-                box.appendChild(groupDiv);
-            });
-        }
-
-        function generateQuiz() {
-            const is3D = Math.random() < 0.5;
-            const divisor = Math.floor(Math.random() * 8) + 2;
-            const dividend = is3D ? Math.floor(Math.random() * 800) + 100 : Math.floor(Math.random() * 80) + 10;
-
-            const q = Math.floor(dividend / divisor);
-            const r = dividend % divisor;
-            const correctStr = `몫: ${q}, 나머지: ${r}`;
-
-            let opts = new Set();
-            opts.add(correctStr);
-            while(opts.size < 5) {
-                let fq = q + (Math.floor(Math.random()*7) - 3);
-                let fr = r + (Math.floor(Math.random()*5) - 2);
-                if(fq < 0) fq = 0;
-                if(fr < 0 || fr >= divisor) fr = Math.max(0, divisor - 1);
-                opts.add(`몫: ${fq}, 나머지: ${fr}`);
-            }
-
-            currentQuiz = {
-                question: `${dividend} ÷ ${divisor} = ?`,
-                correct: correctStr,
-                options: Array.from(opts).sort(() => Math.random() - 0.5)
-            };
-            renderQuiz();
-        }
-
-        function renderQuiz() {
-            document.getElementById('quizQ').innerText = currentQuiz.question;
-            const box = document.getElementById('optsBox');
-            box.innerHTML = '';
-            currentQuiz.options.forEach(opt => {
-                let btn = document.createElement('button');
-                btn.className = 'opt-btn';
-                btn.innerText = opt;
-                btn.onclick = (e) => checkAnswer(opt, e.target);
-                box.appendChild(btn);
-            });
-            updateUI();
-        }
-
-        function updateUI() {
-            let rates = getRates(currentStar);
-            renderStars();
-            document.getElementById('starTxt').innerText = `★ ${currentStar} / ${MAX_STARS}성`;
-            document.getElementById('topStarBadge').innerText = `★ ${currentStar} / ${MAX_STARS}성`;
-            document.getElementById('sucRate').innerText = `${rates.success}%`;
-            document.getElementById('dropRate').innerText = `${rates.drop}%`;
-            document.getElementById('desRate').innerText = `0% (안전)`;
-
-            let curWeapon = weapons[0];
-            for(let w of weapons) {
-                if(currentStar >= w.level) curWeapon = w;
-            }
-            document.getElementById('itemName').innerText = curWeapon.name;
-            document.getElementById('itemImg').src = curWeapon.img;
-        }
-
-        function checkAnswer(selected, btnEl) {
-            if(selected === currentQuiz.correct) {
-                runStarforceAnim();
-            } else {
-                btnEl.classList.remove('wrong-shake');
-                void btnEl.offsetWidth;
-                btnEl.classList.add('wrong-shake');
-                applyPenalty();
-            }
-        }
-
-        function applyPenalty() {
-            const modal = document.getElementById('sfModal');
-            const hammer = document.getElementById('hammerIcon');
-            const title = document.getElementById('modalTitle');
-            const desc = document.getElementById('modalDesc');
-            const btn = document.getElementById('modalBtn');
-
-            modal.style.display = 'flex';
-            hammer.className = 'hammer';
-            hammer.innerText = '⚠️';
-            title.innerText = '오답 페널티!';
-            title.style.color = '#c0392b';
-
-            if (currentStar > 0) {
-                currentStar--;
-                desc.innerText = `틀렸습니다! 스타포스가 ★ ${currentStar}성으로 하락했습니다.`;
-            } else {
-                desc.innerText = '틀렸습니다! 정답을 다시 신중히 생각해보세요. (0성은 하락하지 않아요)';
-            }
-
-            btn.innerText = '다시 풀기';
-            btn.style.display = 'inline-block';
-            updateUI();
-            generateQuiz();
-        }
-
-        function runStarforceAnim() {
-            if (currentStar >= MAX_STARS) {
-                alert("축하합니다! 이미 최고 등급인 ★ 22성에 도달했습니다!");
-                return;
-            }
-
-            const modal = document.getElementById('sfModal');
-            const hammer = document.getElementById('hammerIcon');
-            const title = document.getElementById('modalTitle');
-            const desc = document.getElementById('modalDesc');
-            const btn = document.getElementById('modalBtn');
-
-            modal.style.display = 'flex';
-            hammer.className = 'hammer swing';
-            hammer.innerText = '🔨';
-            title.innerText = '민형쌤의 강화 주문서!';
-            title.style.color = '#d35400';
-            desc.innerText = '별의 기운이 퐁퐁 솟아납니다!';
-            btn.style.display = 'none';
-
-            setTimeout(() => {
-                hammer.className = 'hammer';
-                let rates = getRates(currentStar);
-                let rand = Math.random() * 100;
-
-                if(rand < rates.success) {
-                    currentStar++;
-                    hammer.innerText = '🌟';
-                    title.innerText = 'SUCCESS!';
-                    title.style.color = '#27ae60';
-                    desc.innerText = `성공! ★ ${currentStar}성으로 캐릭터가 꾸며졌어요!`;
-                } else {
-                    currentStar = Math.max(0, currentStar - 1);
-                    hammer.innerText = '💧';
-                    title.innerText = 'FAIL (단계 하락)';
-                    title.style.color = '#e67e22';
-                    desc.innerText = `아쉬워요! ★ ${currentStar}성으로 내려갔어요. (파괴 없음!)`;
-                }
-
-                btn.innerText = '확인';
-                btn.style.display = 'inline-block';
-                updateUI();
-                generateQuiz();
-            }, 1200);
-        }
-
-        function closeModal() {
-            document.getElementById('sfModal').style.display = 'none';
-        }
-
-        // 🎨 치이카와 캔버스 연출
-        let animOffset = 0;
-        function drawScene() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            animOffset += 0.05;
-
-            ctx.fillStyle = '#81d4fa';
-            ctx.fillRect(0, 0, canvas.width, 130);
-
-            ctx.fillStyle = '#6d4c41';
-            ctx.fillRect(90, 50, 18, 80);
-            ctx.fillStyle = '#4caf50';
-            ctx.beginPath(); ctx.arc(99, 45, 36, 0, Math.PI * 2); ctx.fill();
-
-            ctx.fillStyle = '#6d4c41';
-            ctx.fillRect(canvas.width - 110, 40, 20, 90);
-            ctx.fillStyle = '#66bb6a';
-            ctx.beginPath(); ctx.arc(canvas.width - 100, 32, 40, 0, Math.PI * 2); ctx.fill();
-
-            ctx.fillStyle = '#a5d6a7';
-            ctx.fillRect(0, 130, canvas.width, 60);
-            ctx.fillStyle = '#81c784';
-            ctx.fillRect(0, 130, canvas.width, 10);
-
-            const cx = canvas.width / 2;
-            const cy = 100 + Math.sin(animOffset) * 3;
-
-            ctx.save();
-
-            if (currentStar >= 15) {
-                ctx.shadowBlur = 20 + Math.sin(animOffset) * 5;
-                ctx.shadowColor = "#f39c12";
-                ctx.fillStyle = "rgba(241, 196, 15, 0.45)";
-                ctx.beginPath();
-                ctx.arc(cx, cy, 58, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            let isHachiware = currentStar >= 10 && currentStar < 15;
-            let isUsagi = currentStar >= 15;
-
-            ctx.fillStyle = isUsagi ? "#fff176" : "#ffffff";
-            ctx.strokeStyle = "#3e2723";
-            ctx.lineWidth = 3;
-
-            if (isUsagi) {
-                ctx.beginPath(); ctx.ellipse(cx - 18, cy - 35, 8, 22, -0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                ctx.beginPath(); ctx.ellipse(cx + 18, cy - 35, 8, 22, 0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-            } else {
-                ctx.beginPath(); ctx.arc(cx - 24, cy - 22, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                ctx.beginPath(); ctx.arc(cx + 24, cy - 22, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-
-                if (isHachiware) {
-                    ctx.fillStyle = "#42a5f5";
-                    ctx.beginPath(); ctx.arc(cx - 24, cy - 22, 10, 0, Math.PI * 2); ctx.fill();
-                    ctx.beginPath(); ctx.arc(cx + 24, cy - 22, 10, 0, Math.PI * 2); ctx.fill();
-                }
-            }
-
-            ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
-            ctx.beginPath(); ctx.ellipse(cx, cy, 32, 28, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-
-            if (currentStar >= 5 && currentStar < 18) {
-                ctx.fillStyle = "#aed581";
-                ctx.beginPath();
-                ctx.fillRect(cx - 22, cy + 8, 44, 16);
-                ctx.strokeRect(cx - 22, cy + 8, 44, 16);
-                ctx.fillStyle = "#7cb342";
-                ctx.fillRect(cx - 16, cy + 2, 6, 8);
-                ctx.fillRect(cx + 10, cy + 2, 6, 8);
-            }
-
-            if (currentStar >= 18) {
-                ctx.fillStyle = currentStar >= 22 ? "#ffee58" : "#b0bec5";
-                ctx.fillRect(cx - 20, cy + 5, 40, 20);
-                ctx.strokeRect(cx - 20, cy + 5, 40, 20);
-            }
-
-            ctx.fillStyle = "#ff80ab";
-            ctx.beginPath(); ctx.arc(cx - 18, cy + 2, 5, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(cx + 18, cy + 2, 5, 0, Math.PI * 2); ctx.fill();
-
-            ctx.fillStyle = "#212121";
-            ctx.beginPath(); ctx.arc(cx - 11, cy - 2, 3.5, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(cx + 11, cy - 2, 3.5, 0, Math.PI * 2); ctx.fill();
-
-            ctx.fillStyle = "#ffffff";
-            ctx.beginPath(); ctx.arc(cx - 12, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(cx + 10, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
-
-            ctx.strokeStyle = "#212121";
-            ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(cx - 5, cy + 8); ctx.lineTo(cx, cy + 11); ctx.lineTo(cx + 5, cy + 8); ctx.stroke();
-
-            ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
-            ctx.beginPath(); ctx.arc(cx - 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-            ctx.beginPath(); ctx.arc(cx + 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-
-            if (currentStar >= 10) {
-                ctx.fillStyle = "#8d6e63";
-                ctx.fillRect(cx + 28, cy - 10, 5, 25);
-                ctx.fillStyle = "#f1c40f";
-                ctx.fillRect(cx + 25, cy + 5, 11, 4);
-            }
-
-            if (currentStar >= 19) {
-                ctx.fillStyle = "#f1c40f";
-                ctx.strokeStyle = "#d35400";
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(cx - 12, cy - 26);
-                ctx.lineTo(cx - 16, cy - 42);
-                ctx.lineTo(cx - 5, cy - 34);
-                ctx.lineTo(cx, cy - 46);
-                ctx.lineTo(cx + 5, cy - 34);
-                ctx.lineTo(cx + 16, cy - 42);
-                ctx.lineTo(cx + 12, cy - 26);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-            }
-
-            ctx.restore();
-
-            requestAnimationFrame(drawScene);
-        }
-
-        generateQuiz();
-        drawScene();
-    </script>
-</body>
-</html>
+                1:  { success: 9
