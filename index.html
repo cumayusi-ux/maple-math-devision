@@ -197,6 +197,32 @@
             flex-direction: column;
             justify-content: center;
             text-align: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        /* 더블 타임 찬스 이벤트 스타일 */
+        .quiz-panel-right.double-mode {
+            background: #fffde7;
+            border: 3px solid #f1c40f;
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
+        }
+
+        .chance-banner {
+            display: none;
+            background: linear-gradient(90deg, #e67e22, #f1c40f);
+            color: #fff;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 4px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(0.98); }
+            to { transform: scale(1.02); }
         }
 
         .quiz-q {
@@ -330,14 +356,15 @@
 
                     <!-- 성공 / 실패(하락) 확률 -->
                     <div class="rates-box-compact">
-                        <span>성공 확률: <b id="sucRate" style="color:#27ae60;">99.75%</b></span>
-                        <span>실패(하락): <b id="dropRate" style="color:#e67e22;">0.25%</b></span>
+                        <span>성공 확률: <b id="sucRate" style="color:#27ae60;">95.00%</b></span>
+                        <span>실패(하락): <b id="dropRate" style="color:#e67e22;">5.00%</b></span>
                     </div>
                 </div>
 
                 <!-- 우측: 나눗셈 문제 패널 -->
-                <div class="quiz-panel-right">
-                    <div style="font-size: 13px; color: #c0392b; font-weight: bold;">⚠️ 오답 시 단계가 하락할 수 있으니 신중히 푸세요!</div>
+                <div class="quiz-panel-right" id="quizPanel">
+                    <div id="chanceBanner" class="chance-banner">⚡ 더블 타임 찬스! 맞히면 +2성 승급! ⚡</div>
+                    <div id="quizWarn" style="font-size: 13px; color: #c0392b; font-weight: bold;">⚠️ 오답 시 단계가 하락할 수 있으니 신중히 푸세요!</div>
                     <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
                     <div class="quiz-opts" id="optsBox"></div>
                 </div>
@@ -384,8 +411,9 @@
 
         let currentStar = 0;
         let currentQuiz = {};
+        let isDoubleChance = false;
 
-        // 22개의 별 위치 좌표 (2줄 x 11개씩, 왼쪽부터 꽉꽉!)
+        // 22개의 별 위치 좌표 (2줄 x 11개씩)
         const bigStarsGrid = [];
         for (let i = 0; i < MAX_STARS; i++) {
             const col = i % 11;
@@ -410,36 +438,37 @@
             generateQuiz();
         }
 
+        // 난이도 전면 완화! 성공 확률 대폭 상승!
         function getRates(star) {
             if (star >= MAX_STARS) return { success: 0, drop: 0 };
 
             const rateTable = {
-                0:  { success: 99.75, drop: 0.25 },
-                1:  { success: 94.50, drop: 5.50 },
-                2:  { success: 89.25, drop: 10.75 },
-                3:  { success: 89.25, drop: 10.75 },
-                4:  { success: 84.00, drop: 16.00 },
-                5:  { success: 78.75, drop: 21.25 },
-                6:  { success: 73.50, drop: 26.50 },
-                7:  { success: 68.25, drop: 31.75 },
-                8:  { success: 63.00, drop: 37.00 },
-                9:  { success: 57.75, drop: 42.25 },
-                10: { success: 52.50, drop: 47.50 },
-                11: { success: 47.25, drop: 52.75 },
-                12: { success: 42.00, drop: 58.00 },
-                13: { success: 36.75, drop: 63.25 },
-                14: { success: 31.50, drop: 68.50 },
-                15: { success: 31.50, drop: 68.50 },
-                16: { success: 31.50, drop: 68.50 },
-                17: { success: 15.75, drop: 84.25 },
-                18: { success: 15.75, drop: 84.25 },
-                19: { success: 15.75, drop: 84.25 },
-                20: { success: 31.50, drop: 68.50 },
-                21: { success: 15.75, drop: 84.25 },
-                22: { success: 15.75, drop: 84.25 }
+                0:  { success: 98.0, drop: 2.0 },
+                1:  { success: 95.0, drop: 5.0 },
+                2:  { success: 92.0, drop: 8.0 },
+                3:  { success: 90.0, drop: 10.0 },
+                4:  { success: 88.0, drop: 12.0 },
+                5:  { success: 85.0, drop: 15.0 },
+                6:  { success: 83.0, drop: 17.0 },
+                7:  { success: 80.0, drop: 20.0 },
+                8:  { success: 78.0, drop: 22.0 },
+                9:  { success: 75.0, drop: 25.0 },
+                10: { success: 73.0, drop: 27.0 },
+                11: { success: 70.0, drop: 30.0 },
+                12: { success: 68.0, drop: 32.0 },
+                13: { success: 65.0, drop: 35.0 },
+                14: { success: 65.0, drop: 35.0 },
+                15: { success: 65.0, drop: 35.0 },
+                16: { success: 60.0, drop: 40.0 },
+                17: { success: 60.0, drop: 40.0 },
+                18: { success: 60.0, drop: 40.0 },
+                19: { success: 55.0, drop: 45.0 },
+                20: { success: 60.0, drop: 40.0 },
+                21: { success: 50.0, drop: 50.0 },
+                22: { success: 50.0, drop: 50.0 }
             };
 
-            let data = rateTable[star] || { success: 30, drop: 70 };
+            let data = rateTable[star] || { success: 70, drop: 30 };
             return { success: data.success, drop: Number((100 - data.success).toFixed(2)) };
         }
 
@@ -466,6 +495,9 @@
         }
 
         function generateQuiz() {
+            // 25% 확률로 더블 타임 찬스 발동!
+            isDoubleChance = Math.random() < 0.25;
+
             const is3D = Math.random() < 0.5;
             const divisor = Math.floor(Math.random() * 8) + 2;
             const dividend = is3D ? Math.floor(Math.random() * 800) + 100 : Math.floor(Math.random() * 80) + 10;
@@ -493,6 +525,17 @@
         }
 
         function renderQuiz() {
+            const quizPanel = document.getElementById('quizPanel');
+            const chanceBanner = document.getElementById('chanceBanner');
+
+            if (isDoubleChance) {
+                quizPanel.classList.add('double-mode');
+                chanceBanner.style.display = 'block';
+            } else {
+                quizPanel.classList.remove('double-mode');
+                chanceBanner.style.display = 'none';
+            }
+
             document.getElementById('quizQ').innerText = currentQuiz.question;
             const box = document.getElementById('optsBox');
             box.innerHTML = '';
@@ -574,9 +617,9 @@
             modal.style.display = 'flex';
             hammer.className = 'hammer swing';
             hammer.innerText = '🔨';
-            title.innerText = '민형쌤의 강화 주문서!';
+            title.innerText = isDoubleChance ? '⚡ 더블 찬스 강화!' : '민형쌤의 강화 주문서!';
             title.style.color = '#d35400';
-            desc.innerText = '별의 기운이 퐁퐁 솟아납니다!';
+            desc.innerText = isDoubleChance ? '대박 찬스! 2성이 한 번에 올라갈 수 있어요!' : '별의 기운이 퐁퐁 솟아납니다!';
             btn.style.display = 'none';
 
             setTimeout(() => {
@@ -585,11 +628,14 @@
                 let rand = Math.random() * 100;
 
                 if(rand < rates.success) {
-                    currentStar++;
-                    hammer.innerText = '🌟';
+                    let gainStars = isDoubleChance ? 2 : 1;
+                    currentStar = Math.min(MAX_STARS, currentStar + gainStars);
+                    hammer.innerText = isDoubleChance ? '⚡' : '🌟';
                     title.innerText = '맞았어요!';
                     title.style.color = '#27ae60';
-                    desc.innerText = `정답! ★ ${currentStar}성으로 하늘에 커다란 별이 새로 생겼어요!`;
+                    desc.innerText = isDoubleChance 
+                        ? `대박 정답! 더블 찬스로 ★ ${currentStar}성까지 2단계 대폭 상승했어요! 🎉`
+                        : `정답! ★ ${currentStar}성으로 하늘에 커다란 별이 새로 생겼어요!`;
                 } else {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
@@ -609,7 +655,7 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
-        // 🌟 캔버스에 벡터 방식으로 직접 5각 황금 왕별 그리기 함수 (폰트 의존 없음!)
+        // 🌟 5각 황금 왕별 벡터 그리기
         function drawVectorStar(cx, cy, spikes, outerRadius, innerRadius) {
             let rot = Math.PI / 2 * 3;
             let x = cx;
@@ -633,7 +679,7 @@
             ctx.closePath();
         }
 
-        // 🎨 캔버스 밤하늘 + 왕별 모션 연출
+        // 🎨 캔버스 밤하늘 연출
         let animOffset = 0;
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -647,7 +693,7 @@
             ctx.fillStyle = nightGrad;
             ctx.fillRect(0, 0, canvas.width, 130);
 
-            // 2. 🌟 폰트 걱정 없는 100% 벡터 5각 황금 왕별 (왼쪽부터 똭똭 생성!)
+            // 2. 🌟 5각 황금 왕별 (왼쪽부터 똭똭 생성!)
             for (let i = 0; i < currentStar; i++) {
                 let pos = bigStarsGrid[i];
                 let pulse = Math.sin(animOffset * 3 + i) * 1.5;
