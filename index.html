@@ -63,7 +63,7 @@
             height: 100%;
         }
 
-        /* 2. 하단 UI 영역 (화이트 파스텔 테마) */
+        /* 2. 하단 UI 영역 */
         .sf-window {
             background: #ffffff;
             border: 4px solid #f39c12;
@@ -133,7 +133,7 @@
             font-weight: bold;
         }
 
-        /* 22개 별 슬롯 박스 (4 4 4 4 4 2 간격 띄우기) */
+        /* 22개 별 슬롯 (4-4-4-4-4-2 띄어쓰기) */
         .stars-container {
             display: flex;
             flex-wrap: wrap;
@@ -150,7 +150,7 @@
         .star-group {
             display: flex;
             gap: 2px;
-            margin-right: 8px; /* 4개 그룹별 오른쪽 간격 */
+            margin-right: 8px;
         }
 
         .star-group:last-child {
@@ -290,7 +290,7 @@
 </head>
 <body>
 
-    <h1>🍁 민형쌤과 함께하는 나눗셈 정복 🍁</h1>
+    <h1>🍁 민형쌤과 함께하는 나눗셈 정복 (파괴 없음!) 🍁</h1>
 
     <div class="game-container">
         <!-- 1. 상단 숲속 화면 -->
@@ -301,7 +301,7 @@
         <!-- 2. 스타포스 가로형 배치 -->
         <div class="sf-window">
             <div class="sf-header">
-                <span>⚔️ 스타포스 장비 강화소 (최대 ★22성)</span>
+                <span>⚔️ 스타포스 장비 강화소 (최대 ★22성 / 파괴없음)</span>
                 <span id="topStarBadge">★ 0성</span>
             </div>
 
@@ -318,15 +318,15 @@
                     <div class="stars-count-txt" id="starTxt">★ 0 / 22성</div>
 
                     <div class="rates-box-compact">
-                        <span>성공: <b id="sucRate" style="color:#27ae60;">95%</b></span>
-                        <span>하락: <b id="dropRate" style="color:#e67e22;">0%</b></span>
-                        <span>파괴: <b id="desRate" style="color:#c0392b;">0%</b></span>
+                        <span>성공: <b id="sucRate" style="color:#27ae60;">99.75%</b></span>
+                        <span>하락: <b id="dropRate" style="color:#e67e22;">0.25%</b></span>
+                        <span>파괴: <b id="desRate" style="color:#27ae60;">0% (안전)</b></span>
                     </div>
                 </div>
 
                 <!-- 우측: 나눗셈 문제 패널 -->
                 <div class="quiz-panel-right">
-                    <div style="font-size: 13px; color: #c0392b; font-weight: bold;">⚠️ 찍기 금지! 오답 시 스타포스가 하락합니다!</div>
+                    <div style="font-size: 13px; color: #c0392b; font-weight: bold;">⚠️ 오답 시 단계가 하락할 수 있으니 신중히 푸세요!</div>
                     <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
                     <div class="quiz-opts" id="optsBox"></div>
                 </div>
@@ -360,29 +360,46 @@
         ];
 
         let currentStar = 0;
-        let isDestroyed = false;
         let currentQuiz = {};
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
+        // 사용자 제공 썬데이메이플 기준 확률표 매핑 (파괴율 0%)
         function getRates(star) {
             if (star >= MAX_STARS) return { success: 0, drop: 0, destroy: 0 };
-            
-            if (star < 10) {
-                return { success: 95 - star * 2, drop: 0, destroy: 0 };
-            } else if (star < 15) {
-                let suc = 70 - (star - 10) * 5;
-                return { success: suc, drop: 100 - suc, destroy: 0 };
-            } else {
-                let suc = Math.max(30, 45 - (star - 15) * 3);
-                let des = Math.min(20, 5 + (star - 15) * 2.5);
-                let drop = 100 - suc - des;
-                return { success: Math.round(suc), drop: Math.round(drop), destroy: Math.round(des) };
-            }
+
+            const rateTable = {
+                0:  { success: 99.75, drop: 0.25 },
+                1:  { success: 94.50, drop: 5.50 },
+                2:  { success: 89.25, drop: 10.75 },
+                3:  { success: 89.25, drop: 10.75 },
+                4:  { success: 84.00, drop: 16.00 },
+                5:  { success: 78.75, drop: 21.25 },
+                6:  { success: 73.50, drop: 26.50 },
+                7:  { success: 68.25, drop: 31.75 },
+                8:  { success: 63.00, drop: 37.00 },
+                9:  { success: 57.75, drop: 42.25 },
+                10: { success: 52.50, drop: 47.50 },
+                11: { success: 47.25, drop: 52.75 },
+                12: { success: 42.00, drop: 58.00 },
+                13: { success: 36.75, drop: 63.25 },
+                14: { success: 31.50, drop: 68.50 },
+                15: { success: 31.50, drop: 66.445 },
+                16: { success: 31.50, drop: 66.445 },
+                17: { success: 15.75, drop: 77.510 },
+                18: { success: 15.75, drop: 77.510 },
+                19: { success: 15.75, drop: 75.825 },
+                20: { success: 31.50, drop: 58.225 },
+                21: { success: 15.75, drop: 71.6125 },
+                22: { success: 15.75, drop: 67.40 }
+            };
+
+            let data = rateTable[star] || { success: 30, drop: 70 };
+            return { success: data.success, drop: data.drop, destroy: 0 };
         }
 
-        // 22개 별 슬롯을 4 4 4 4 4 2 단위로 그룹화 생성
+        // 22개 별 슬롯 (4-4-4-4-4-2)
         function renderStars() {
             const box = document.getElementById('starsBox');
             box.innerHTML = '';
@@ -453,7 +470,7 @@
             document.getElementById('topStarBadge').innerText = `★ ${currentStar} / ${MAX_STARS}성`;
             document.getElementById('sucRate').innerText = `${rates.success}%`;
             document.getElementById('dropRate').innerText = `${rates.drop}%`;
-            document.getElementById('desRate').innerText = `${rates.destroy}%`;
+            document.getElementById('desRate').innerText = `0% (안전)`;
 
             let curWeapon = weapons[0];
             for(let w of weapons) {
@@ -464,11 +481,6 @@
         }
 
         function checkAnswer(selected, btnEl) {
-            if(isDestroyed) {
-                alert("장비가 파괴되었습니다! 0성부터 다시 시도하세요.");
-                return;
-            }
-
             if(selected === currentQuiz.correct) {
                 runStarforceAnim();
             } else {
@@ -489,25 +501,17 @@
             modal.style.display = 'flex';
             hammer.className = 'hammer';
             hammer.innerText = '⚠️';
-            title.innerText = '오답 페널티 발동!';
+            title.innerText = '오답 페널티!';
             title.style.color = '#c0392b';
 
             if (currentStar > 0) {
-                if (currentStar >= 15 && Math.random() < 0.1) {
-                    isDestroyed = true;
-                    title.innerText = '💥 오답으로 장비 파괴!';
-                    desc.innerText = '틀린 답을 선택하여 장비가 파괴되었습니다. (0성 초기화)';
-                    btn.innerText = '0성부터 다시 시작';
-                } else {
-                    currentStar--;
-                    desc.innerText = `오답을 선택하여 스타포스가 ★ ${currentStar}성으로 하락했습니다!`;
-                    btn.innerText = '다시 신중하게 풀기';
-                }
+                currentStar--;
+                desc.innerText = `틀렸습니다! 스타포스가 ★ ${currentStar}성으로 하락했습니다.`;
             } else {
-                desc.innerText = '틀렸습니다! 정답을 다시 신중히 생각해보세요.';
-                btn.innerText = '다시 풀기';
+                desc.innerText = '틀렸습니다! 정답을 다시 신중히 생각해보세요. (0성은 하락하지 않아요)';
             }
 
+            btn.innerText = '다시 풀기';
             btn.style.display = 'inline-block';
             updateUI();
             generateQuiz();
@@ -544,21 +548,15 @@
                     title.innerText = 'SUCCESS!';
                     title.style.color = '#27ae60';
                     desc.innerText = `성공! ★ ${currentStar}성으로 캐릭터가 꾸며졌어요!`;
-                } else if(rand < rates.success + rates.drop) {
+                } else {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
                     title.innerText = 'FAIL (단계 하락)';
                     title.style.color = '#e67e22';
-                    desc.innerText = `아쉬워요! ★ ${currentStar}성으로 내려갔어요.`;
-                } else {
-                    isDestroyed = true;
-                    hammer.innerText = '💥';
-                    title.innerText = 'DESTROYED!';
-                    title.style.color = '#c0392b';
-                    desc.innerText = '장비가 파괴되었어요! 0성부터 다시 시도해보세요.';
-                    btn.innerText = '0성부터 다시 시작';
+                    desc.innerText = `아쉬워요! ★ ${currentStar}성으로 내려갔어요. (파괴 없음!)`;
                 }
 
+                btn.innerText = '확인';
                 btn.style.display = 'inline-block';
                 updateUI();
                 generateQuiz();
@@ -566,11 +564,6 @@
         }
 
         function closeModal() {
-            if(isDestroyed) {
-                currentStar = 0;
-                isDestroyed = false;
-                updateUI();
-            }
             document.getElementById('sfModal').style.display = 'none';
         }
 
