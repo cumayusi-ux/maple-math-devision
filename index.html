@@ -46,6 +46,7 @@
             gap: 10px;
         }
 
+        /* 1. 상단 숲속 사냥터 캔버스 */
         .map-frame {
             position: relative;
             width: 100%;
@@ -62,38 +63,7 @@
             height: 100%;
         }
 
-        .character-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -60%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            pointer-events: none;
-        }
-
-        .avatar-img {
-            height: 95px;
-            object-fit: contain;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-        }
-
-        .avatar-aura {
-            position: absolute;
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,235,59,0.4) 0%, rgba(255,235,59,0) 70%);
-            animation: pulseAura 1.5s infinite alternate;
-            display: none;
-        }
-
-        @keyframes pulseAura {
-            from { transform: scale(0.8); opacity: 0.5; }
-            to { transform: scale(1.2); opacity: 0.9; }
-        }
-
+        /* 2. 하단 UI 영역 (태블릿 가로 나란히 배치) */
         .sf-window {
             background: linear-gradient(to bottom, rgba(40, 25, 75, 0.95), rgba(18, 10, 40, 0.95));
             border: 4px solid #ffb74d;
@@ -220,7 +190,6 @@
             box-shadow: 0 3px 0 #e65100;
         }
 
-        /* 💥 오답 페널티 애니메이션 */
         .opt-btn.wrong-shake {
             animation: shake 0.4s ease-in-out;
             background: linear-gradient(to bottom, #e53935, #c62828) !important;
@@ -253,7 +222,7 @@
             background: linear-gradient(to bottom, #3f51b5, #1a237e);
             border: 4px solid #ffeb3b;
             border-radius: 18px;
-            width: 330px;
+            width: 320px;
             padding: 20px;
             text-align: center;
             box-shadow: 0 0 30px #ffeb3b;
@@ -284,14 +253,12 @@
     <h1>🍁 민형쌤과 함께하는 나눗셈 정복 🍁</h1>
 
     <div class="game-container">
+        <!-- 1. 상단 숲속 화면 -->
         <div class="map-frame">
             <canvas id="gameCanvas" width="960" height="190"></canvas>
-            <div class="character-overlay">
-                <div class="avatar-aura" id="avatarAura"></div>
-                <img id="mainAvatar" class="avatar-img" src="https://maplestory.io/api/KMS/352/character/center/2000,1040002,1060006/stand1/0?showRank=false" alt="메이플 아바타">
-            </div>
         </div>
 
+        <!-- 2. 스타포스 가로형 배치 -->
         <div class="sf-window">
             <div class="sf-header">
                 <span>⚔️ 스타포스 장비 강화소</span>
@@ -299,6 +266,7 @@
             </div>
 
             <div class="sf-landscape-grid">
+                <!-- 좌측: 강화 카드 -->
                 <div class="sf-card-left">
                     <div class="item-title" id="itemName">초보자의 목검</div>
                     <div class="item-preview">
@@ -313,6 +281,7 @@
                     </div>
                 </div>
 
+                <!-- 우측: 나눗셈 문제 패널 -->
                 <div class="quiz-panel-right">
                     <div style="font-size: 13px; color: #ffeb3b;">⚠️ 찍기 금지! 오답 시 스타포스가 하락합니다!</div>
                     <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
@@ -324,7 +293,7 @@
 
     <!-- 모달 -->
     <div id="sfModal" class="modal-bg">
-        <div class="modal-box" id="modalBoxContainer">
+        <div class="modal-box">
             <div id="hammerIcon" class="hammer">🔨</div>
             <h2 id="modalTitle" style="color:#ffeb3b; font-size:22px;">강화 진행 중...</h2>
             <div id="modalDesc" style="font-size:14px; margin-top:6px; color:#e0e0e0;">주문서의 기운이 모입니다!</div>
@@ -344,14 +313,6 @@
             { level: 35, name: "앱솔랩스 브로드세이버", img: "https://maplestory.io/api/KMS/352/item/1402225/icon" },
             { level: 40, name: "아케인셰이드 두손검", img: "https://maplestory.io/api/KMS/352/item/1402255/icon" },
             { level: 48, name: "제네시스 투핸드소드", img: "https://maplestory.io/api/KMS/352/item/1402259/icon" }
-        ];
-
-        const avatarSprites = [
-            "https://maplestory.io/api/KMS/352/character/center/2000,1040002,1060006/stand1/0?showRank=false",
-            "https://maplestory.io/api/KMS/352/character/center/2000,1042003,1062007,1302000/stand1/0?showRank=false",
-            "https://maplestory.io/api/KMS/352/character/center/2000,1042144,1062164,1402008/stand1/0?showRank=false",
-            "https://maplestory.io/api/KMS/352/character/center/2000,1052610,1003796,1402196/stand1/0?showRank=false",
-            "https://maplestory.io/api/KMS/352/character/center/2000,1053063,1004808,1402259/stand1/0?showRank=false"
         ];
 
         let currentStar = 0;
@@ -432,29 +393,8 @@
             }
             document.getElementById('itemName').innerText = curWeapon.name;
             document.getElementById('itemImg').src = curWeapon.img;
-
-            const avatarImg = document.getElementById('mainAvatar');
-            const auraEl = document.getElementById('avatarAura');
-            
-            if (currentStar >= 40) {
-                avatarImg.src = avatarSprites[4];
-                auraEl.style.display = 'block';
-            } else if (currentStar >= 28) {
-                avatarImg.src = avatarSprites[3];
-                auraEl.style.display = 'none';
-            } else if (currentStar >= 15) {
-                avatarImg.src = avatarSprites[2];
-                auraEl.style.display = 'none';
-            } else if (currentStar >= 5) {
-                avatarImg.src = avatarSprites[1];
-                auraEl.style.display = 'none';
-            } else {
-                avatarImg.src = avatarSprites[0];
-                auraEl.style.display = 'none';
-            }
         }
 
-        // 🚨 오답 시 페널티 (스타포스 단계 하락 or 파괴)
         function checkAnswer(selected, btnEl) {
             if(isDestroyed) {
                 alert("장비가 파괴되었습니다! 0성부터 다시 시도하세요.");
@@ -464,11 +404,9 @@
             if(selected === currentQuiz.correct) {
                 runStarforceAnim();
             } else {
-                // 오답 페널티 실행!
                 btnEl.classList.remove('wrong-shake');
                 void btnEl.offsetWidth;
                 btnEl.classList.add('wrong-shake');
-
                 applyPenalty();
             }
         }
@@ -487,7 +425,6 @@
             title.style.color = '#e74c3c';
 
             if (currentStar > 0) {
-                // 고레벨 오답 시 파괴 가능성
                 if (currentStar >= 20 && Math.random() < 0.15) {
                     isDestroyed = true;
                     title.innerText = '💥 오답으로 장비 파괴!';
@@ -564,26 +501,151 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
+        // 🎨 치이카와(Chiikawa) 자체 캔버스 그리기 함수
+        let animOffset = 0;
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            animOffset += 0.05;
 
-            ctx.fillStyle = '#64b5f6';
+            // 1. 파란 하늘 배경
+            ctx.fillStyle = '#81d4fa';
             ctx.fillRect(0, 0, canvas.width, 130);
 
-            ctx.fillStyle = '#5d4037';
-            ctx.fillRect(80, 50, 20, 80);
-            ctx.fillStyle = '#2e7d32';
-            ctx.beginPath(); ctx.arc(90, 45, 38, 0, Math.PI * 2); ctx.fill();
-
-            ctx.fillStyle = '#5d4037';
-            ctx.fillRect(canvas.width - 100, 40, 22, 90);
-            ctx.fillStyle = '#388e3c';
-            ctx.beginPath(); ctx.arc(canvas.width - 89, 32, 42, 0, Math.PI * 2); ctx.fill();
-
-            ctx.fillStyle = '#81c784';
-            ctx.fillRect(0, 130, canvas.width, 60);
+            // 2. 울창한 나무 배경
+            ctx.fillStyle = '#6d4c41';
+            ctx.fillRect(90, 50, 18, 80);
             ctx.fillStyle = '#4caf50';
+            ctx.beginPath(); ctx.arc(99, 45, 36, 0, Math.PI * 2); ctx.fill();
+
+            ctx.fillStyle = '#6d4c41';
+            ctx.fillRect(canvas.width - 110, 40, 20, 90);
+            ctx.fillStyle = '#66bb6a';
+            ctx.beginPath(); ctx.arc(canvas.width - 100, 32, 40, 0, Math.PI * 2); ctx.fill();
+
+            // 3. 지형 (바닥 녹색 풀밭)
+            ctx.fillStyle = '#a5d6a7';
+            ctx.fillRect(0, 130, canvas.width, 60);
+            ctx.fillStyle = '#81c784';
             ctx.fillRect(0, 130, canvas.width, 10);
+
+            // 4. 💖 치이카와 (Chiikawa) 중앙 캐릭터 렌더링
+            const cx = canvas.width / 2;
+            const cy = 100 + Math.sin(animOffset) * 3; // 둥실둥실 바운스 모션
+
+            ctx.save();
+
+            // 30성 이상: 신성한 오라 효과
+            if (currentStar >= 30) {
+                ctx.shadowBlur = 20 + Math.sin(animOffset) * 5;
+                ctx.shadowColor = "#ffeb3b";
+                ctx.fillStyle = "rgba(255, 235, 59, 0.4)";
+                ctx.beginPath();
+                ctx.arc(cx, cy, 55, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 귀 종류 & 색상 (단계별 치이카와 친구들 변신)
+            let earColor = "#ffffff";
+            let isHachiware = currentStar >= 10 && currentStar < 20;
+            let isUsagi = currentStar >= 20 && currentStar < 30;
+
+            if (isHachiware) earColor = "#42a5f5"; // 하치와레 (파란 귀)
+            if (isUsagi) earColor = "#fff176";     // 우사기 (노란 토끼 귀)
+
+            // 귀 그리기
+            ctx.fillStyle = isUsagi ? "#fff176" : "#ffffff";
+            ctx.strokeStyle = "#212121";
+            ctx.lineWidth = 3;
+
+            if (isUsagi) {
+                // 토끼 긴 귀
+                ctx.beginPath();
+                ctx.ellipse(cx - 18, cy - 35, 8, 22, -0.2, 0, Math.PI * 2);
+                ctx.fill(); ctx.stroke();
+                ctx.beginPath();
+                ctx.ellipse(cx + 18, cy - 35, 8, 22, 0.2, 0, Math.PI * 2);
+                ctx.fill(); ctx.stroke();
+            } else {
+                // 동글동글 곰/고양이 귀
+                ctx.beginPath();
+                ctx.arc(cx - 24, cy - 22, 12, 0, Math.PI * 2);
+                ctx.fill(); ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(cx + 24, cy - 22, 12, 0, Math.PI * 2);
+                ctx.fill(); ctx.stroke();
+
+                if (isHachiware) {
+                    // 하치와레 머리 파란 모자무늬
+                    ctx.fillStyle = "#42a5f5";
+                    ctx.beginPath();
+                    ctx.arc(cx - 24, cy - 22, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(cx + 24, cy - 22, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // 치이카와 동글동글 하얀 몸통
+            ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 32, 28, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // 30성 이상: 기사/영웅 갑옷 입히기
+            if (currentStar >= 30) {
+                ctx.fillStyle = currentStar >= 40 ? "#ffee58" : "#9e9e9e";
+                ctx.fillRect(cx - 20, cy + 5, 40, 20);
+                ctx.strokeRect(cx - 20, cy + 5, 40, 20);
+            }
+
+            // 볼터치 (핑크 뺨)
+            ctx.fillStyle = "#ff80ab";
+            ctx.beginPath(); ctx.arc(cx - 18, cy + 2, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx + 18, cy + 2, 5, 0, Math.PI * 2); ctx.fill();
+
+            // 반짝이는 동그란 눈
+            ctx.fillStyle = "#212121";
+            ctx.beginPath(); ctx.arc(cx - 11, cy - 2, 3.5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx + 11, cy - 2, 3.5, 0, Math.PI * 2); ctx.fill();
+
+            // 눈동자 하이라이트
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath(); ctx.arc(cx - 12, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx + 10, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
+
+            // 입 (ㅅ 모양 귀여운 입)
+            ctx.strokeStyle = "#212121";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx - 5, cy + 8);
+            ctx.lineTo(cx, cy + 11);
+            ctx.lineTo(cx + 5, cy + 8);
+            ctx.stroke();
+
+            // 손
+            ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
+            ctx.beginPath(); ctx.arc(cx - 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.arc(cx + 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+            // 40성 이상: 황금 왕관
+            if (currentStar >= 40) {
+                ctx.fillStyle = "#ffeb3b";
+                ctx.beginPath();
+                ctx.moveTo(cx - 12, cy - 26);
+                ctx.lineTo(cx - 16, cy - 42);
+                ctx.lineTo(cx - 5, cy - 34);
+                ctx.lineTo(cx, cy - 46);
+                ctx.lineTo(cx + 5, cy - 34);
+                ctx.lineTo(cx + 16, cy - 42);
+                ctx.lineTo(cx + 12, cy - 26);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            ctx.restore();
 
             requestAnimationFrame(drawScene);
         }
