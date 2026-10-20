@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>메이플스토리 스타포스 강화 시스템</title>
+    <title>메이플스토리 헤네시스 스타포스 나눗셈</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,50 +14,54 @@
         }
 
         body {
-            background: #0b0f19 url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
+            background: #0b0f19;
             color: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
 
         h1 {
-            color: #f39c12;
+            color: #ffeb3b;
             text-shadow: 2px 2px 4px #000;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-size: 22px;
         }
 
-        .game-layout {
-            display: flex;
-            flex-direction: column;
+        .game-container {
             width: 100%;
             max-width: 850px;
-            gap: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        /* 게임 메인 사냥터 화면 */
-        .field-container {
+        /* 헤네시스 맵 캔버스 영역 */
+        .map-frame {
             position: relative;
             width: 100%;
-            height: 220px;
-            background: linear-gradient(to bottom, #3b74bc, #a1c4fd);
-            border: 3px solid #3e2723;
-            border-radius: 6px;
+            height: 260px;
+            border: 4px solid #5c3d2e;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
         }
 
-        /* 메이플 정통 스타포스 강화 창 UI (영상의 레이아웃 그대로 재현) */
-        .starforce-window {
-            background: linear-gradient(to bottom, #3c322b, #1f1814);
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 메이플 정통 스타포스 UI 패널 */
+        .sf-window {
+            background: linear-gradient(to bottom, #3a2e26, #1c1510);
             border: 4px solid #8c6747;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border-radius: 8px;
             padding: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9);
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -67,157 +71,149 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #5a4231;
+            border-bottom: 2px solid #5c4331;
             padding-bottom: 8px;
-            font-weight: bold;
             color: #f1c40f;
-            font-size: 16px;
+            font-weight: bold;
         }
 
-        .sf-body-grid {
+        .sf-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
         }
 
         @media(max-width: 600px) {
-            .sf-body-grid { grid-template-columns: 1fr; }
+            .sf-grid { grid-template-columns: 1fr; }
         }
 
-        /* 왼쪽: 강화 대상 패널 */
-        .sf-target-box {
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid #5a4231;
+        .sf-card {
+            background: rgba(0, 0, 0, 0.45);
+            border: 2px solid #5c4331;
             border-radius: 6px;
             padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
         }
 
-        .item-slot {
-            width: 70px; height: 70px;
+        .item-preview {
+            width: 80px; height: 80px;
             background: #111;
-            border: 2px solid #d4af37;
+            border: 2px solid #f1c40f;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.5);
             margin: 8px 0;
+            box-shadow: inset 0 0 12px rgba(241, 196, 15, 0.4);
         }
 
-        .item-name {
-            font-size: 15px;
+        .item-preview img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .item-title {
+            font-size: 16px;
             font-weight: bold;
             color: #ffeb3b;
-            text-align: center;
         }
 
-        .item-stars {
+        .stars-txt {
             color: #f1c40f;
-            font-size: 16px;
+            font-size: 18px;
             margin: 4px 0;
         }
 
-        .rates-info {
+        .rates-box {
             width: 100%;
             font-size: 13px;
             background: rgba(255,255,255,0.05);
-            padding: 6px;
+            padding: 8px;
             border-radius: 4px;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
-        .rate-row {
+        .rate-line {
             display: flex;
             justify-content: space-between;
             margin: 2px 0;
         }
 
-        /* 오른쪽: 인벤토리 슬롯 격자 (유튜브 영상 우측 상단 UI 반영) */
-        .sf-inventory-box {
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid #5a4231;
-            border-radius: 6px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .inventory-title {
-            font-size: 13px;
-            color: #ccc;
-            margin-bottom: 8px;
-        }
-
-        .inventory-grid {
+        /* 인벤토리 격자 */
+        .inven-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 6px;
+            width: 100%;
+            margin-top: 8px;
         }
 
         .inven-slot {
             aspect-ratio: 1;
-            background: #1b1613;
-            border: 1px solid #5a4231;
+            background: #18120d;
+            border: 1px solid #5c4331;
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+        }
+
+        .inven-slot img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
         }
 
         .inven-slot.active {
-            border-color: #f1c40f;
-            background: #3a2e21;
-            box-shadow: 0 0 6px #f1c40f;
+            border: 2px solid #f1c40f;
+            background: #2a2017;
+            box-shadow: 0 0 8px #f1c40f;
         }
 
-        /* 나눗셈 문제 풀이 패널 */
+        /* 나눗셈 문제 창 */
         .quiz-panel {
-            background: #1e1b18;
-            border: 2px solid #d4af37;
+            background: #16100c;
+            border: 2px solid #8c6747;
             border-radius: 6px;
             padding: 12px;
             text-align: center;
         }
 
-        .quiz-question {
-            font-size: 24px;
+        .quiz-q {
+            font-size: 26px;
             font-weight: bold;
-            color: #ffffff;
-            margin: 10px 0;
-            text-shadow: 1px 1px 2px #000;
+            color: #fff;
+            margin: 8px 0;
+            text-shadow: 2px 2px 4px #000;
         }
 
-        .options-grid {
+        .quiz-opts {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
             gap: 6px;
         }
 
-        .option-btn {
-            background: linear-gradient(to bottom, #5a4231, #3c322b);
+        .opt-btn {
+            background: linear-gradient(to bottom, #5c4331, #3a2e26);
             color: #fff;
-            border: 1px solid #d4af37;
+            border: 1px solid #8c6747;
             padding: 10px;
             font-size: 15px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.1s;
         }
 
-        .option-btn:hover {
-            background: linear-gradient(to bottom, #d4af37, #b8860b);
+        .opt-btn:hover {
+            background: linear-gradient(to bottom, #f1c40f, #d35400);
             color: #000;
             font-weight: bold;
         }
 
-        /* 스타포스 강화 연출 모달 (영상 속 화면 재현) */
-        .sf-modal-overlay {
+        /* 강화 연출 모달 */
+        .modal-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85);
@@ -228,142 +224,122 @@
             display: none;
         }
 
-        .sf-modal-box {
-            background: linear-gradient(to bottom, #4a3b2c, #1f1814);
-            border: 4px solid #d4af37;
+        .modal-box {
+            background: linear-gradient(to bottom, #4a382a, #1c1510);
+            border: 4px solid #f1c40f;
             border-radius: 10px;
-            width: 340px;
-            padding: 25px;
+            width: 320px;
+            padding: 20px;
             text-align: center;
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
-            animation: popUp 0.25s ease-out;
+            box-shadow: 0 0 30px #f1c40f;
         }
 
-        @keyframes popUp {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        .hammer { font-size: 50px; display: inline-block; margin-bottom: 10px; }
+        .swing { animation: hammerAnim 0.3s infinite alternate; }
+        @keyframes hammerAnim {
+            from { transform: rotate(-20deg); }
+            to { transform: rotate(20deg); }
         }
 
-        .hammer-icon {
-            font-size: 55px;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        .swing { animation: hammering 0.35s infinite alternate; }
-        @keyframes hammering {
-            from { transform: rotate(-25deg); }
-            to { transform: rotate(25deg); }
-        }
-
-        .result-heading {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-shadow: 2px 2px 4px #000;
-        }
-
-        .modal-btn {
-            background: #d4af37;
+        .m-btn {
+            background: #f1c40f;
             color: #000;
             border: none;
-            padding: 8px 20px;
-            font-size: 15px;
+            padding: 8px 18px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 12px;
         }
-        .modal-btn:hover { background: #f1c40f; }
     </style>
 </head>
 <body>
 
-    <h1>🍁 메이플스토리 : 스타포스 강화 나눗셈 탐험대 🍁</h1>
+    <h1>🍁 메이플스토리 헤네시스 : 스타포스 나눗셈 🍁</h1>
 
-    <div class="game-layout">
-        <!-- 1. 미니 사냥터 화면 -->
-        <div class="field-container">
-            <canvas id="gameCanvas" width="850" height="220"></canvas>
+    <div class="game-container">
+        <!-- 헤네시스 사냥터/마을 화면 -->
+        <div class="map-frame">
+            <canvas id="gameCanvas" width="850" height="260"></canvas>
         </div>
 
-        <!-- 2. 메이플 정통 스타포스 UI 창 -->
-        <div class="starforce-window">
+        <!-- 메이플 스타포스 UI -->
+        <div class="sf-window">
             <div class="sf-header">
-                <span>⚔️ EQUIP : 장비 강화 (Starforce)</span>
-                <span id="topLvBadge" style="font-size: 12px; color: #aaa;">LV. 0</span>
+                <span>⚔️ 헤네시스 대장간 : 장비 강화 (Starforce)</span>
+                <span id="topStarBadge">★ 0성</span>
             </div>
 
-            <div class="sf-body-grid">
-                <!-- 왼쪽: 대상 장비 슬롯 및 확률 -->
-                <div class="sf-target-box">
-                    <div class="item-name" id="weaponName">초보자의 목검</div>
-                    <div class="item-slot" id="itemSlotIcon">🗡️</div>
-                    <div class="item-stars" id="starDisplay">★ 0 / 50</div>
-                    
-                    <div class="rates-info">
-                        <div class="rate-row"><span>성공률:</span> <b id="sucRateTxt" style="color:#2ecc71;">95%</b></div>
-                        <div class="rate-row"><span>하락률:</span> <b id="dropRateTxt" style="color:#e67e22;">0%</b></div>
-                        <div class="rate-row"><span>파괴률:</span> <b id="desRateTxt" style="color:#e74c3c;">0%</b></div>
+            <div class="sf-grid">
+                <!-- 대상 무기 카드 -->
+                <div class="sf-card">
+                    <div class="item-title" id="itemName">초보자의 목검</div>
+                    <div class="item-preview">
+                        <img id="itemImg" src="https://maplestory.io/api/KMS/352/item/1302000/icon" alt="무기">
+                    </div>
+                    <div class="stars-txt" id="starTxt">★ 0 / 50성</div>
+
+                    <div class="rates-box">
+                        <div class="rate-line"><span>성공 확률:</span> <b id="sucRate" style="color:#2ecc71;">95%</b></div>
+                        <div class="rate-line"><span>하락 확률:</span> <b id="dropRate" style="color:#e67e22;">0%</b></div>
+                        <div class="rate-line"><span>파괴 확률:</span> <b id="desRate" style="color:#e74c3c;">0%</b></div>
                     </div>
                 </div>
 
-                <!-- 오른쪽: 인벤토리 장비 슬롯 격자 (영상 참고) -->
-                <div class="sf-inventory-box">
-                    <div class="inventory-title">소지 중인 장비 슬롯</div>
-                    <div class="inventory-grid" id="invenGrid">
-                        <!-- 동적 생성 -->
-                    </div>
+                <!-- 인벤토리 격자 -->
+                <div class="sf-card" style="align-items: flex-start;">
+                    <div style="font-size: 13px; color: #ccc;">장비 인벤토리</div>
+                    <div class="inven-grid" id="invenGrid"></div>
                 </div>
             </div>
 
-            <!-- 3. 나눗셈 문제 풀이 패널 -->
+            <!-- 나눗셈 문제 패널 -->
             <div class="quiz-panel">
-                <div style="font-size: 13px; color: #aaa;">나눗셈 문제를 풀면 스타포스 강화 주문서가 발동합니다!</div>
-                <div class="quiz-question" id="quizQuestion">85 ÷ 4 = ?</div>
-                <div class="options-grid" id="optionsContainer">
-                    <!-- 5지선다 버튼 -->
-                </div>
+                <div style="font-size: 13px; color: #aaa;">나눗셈 문제를 정답 처리하면 스타포스 주문서가 발동합니다.</div>
+                <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
+                <div class="quiz-opts" id="optsBox"></div>
             </div>
         </div>
     </div>
 
-    <!-- 스타포스 연출 모달 팝업 -->
-    <div id="sfModal" class="sf-modal-overlay">
-        <div class="sf-modal-box">
-            <div id="hammerEl" class="hammer-icon">🔨</div>
-            <div id="modalTitle" class="result-heading">강화 진행 중...</div>
-            <div id="modalDesc" style="font-size: 14px; color: #ddd; margin-top: 5px;">주문서의 기운이 모이고 있습니다.</div>
-            <button id="confirmBtn" class="modal-btn" onclick="closeModal()" style="display: none;">확인</button>
+    <!-- 모달 -->
+    <div id="sfModal" class="modal-bg">
+        <div class="modal-box">
+            <div id="hammerIcon" class="hammer">🔨</div>
+            <h2 id="modalTitle" style="color:#f1c40f; font-size:22px;">강화 중...</h2>
+            <div id="modalDesc" style="font-size:14px; margin-top:6px; color:#ddd;">스타포스 주문서의 기운이 모입니다!</div>
+            <button id="modalBtn" class="m-btn" onclick="closeModal()" style="display:none;">확인</button>
         </div>
     </div>
 
     <script>
-        // 무기 계보 (목검부터 제네시스까지 10단계)
+        // 메이플스토리 오픈 API의 실제 무기 아이콘 이미지 주소 연결 (목검 ~ 제네시스소드)
         const weapons = [
-            { level: 0, name: "초보자의 목검", icon: "🗡️" },
-            { level: 5, name: "하이랜더", icon: "⚔️" },
-            { level: 10, name: "호검", icon: "🗡️" },
-            { level: 15, name: "그륜힐", icon: "⚔️" },
-            { level: 20, name: "드래곤 클레이모어", icon: "🛡️" },
-            { level: 25, name: "우트가르드 소드", icon: "⚔️" },
-            { level: 30, name: "파프니르 페니텐시아", icon: "🗡️" },
-            { level: 35, name: "앱솔랩스 브로드세이버", icon: "⚔️" },
-            { level: 40, name: "아케인셰이드 두손검", icon: "✨" },
-            { level: 48, name: "제네시스 투핸드소드", icon: "🌟" }
+            { level: 0, name: "초보자의 목검", img: "https://maplestory.io/api/KMS/352/item/1302000/icon" },
+            { level: 5, name: "하이랜더", img: "https://maplestory.io/api/KMS/352/item/1402002/icon" },
+            { level: 10, name: "호검", img: "https://maplestory.io/api/KMS/352/item/1402004/icon" },
+            { level: 15, name: "그륜힐", img: "https://maplestory.io/api/KMS/352/item/1402008/icon" },
+            { level: 20, name: "드래곤 클레이모어", img: "https://maplestory.io/api/KMS/352/item/1402018/icon" },
+            { level: 25, name: "우트가르드 투핸드소드", img: "https://maplestory.io/api/KMS/352/item/1402220/icon" },
+            { level: 30, name: "파프니르 페니텐시아", img: "https://maplestory.io/api/KMS/352/item/1402196/icon" },
+            { level: 35, name: "앱솔랩스 브로드세이버", img: "https://maplestory.io/api/KMS/352/item/1402225/icon" },
+            { level: 40, name: "아케인셰이드 두손검", img: "https://maplestory.io/api/KMS/352/item/1402255/icon" },
+            { level: 48, name: "제네시스 투핸드소드", img: "https://maplestory.io/api/KMS/352/item/1402259/icon" }
         ];
 
         let currentStar = 0;
         let isDestroyed = false;
         let currentQuiz = {};
 
-        // 캔버스 사냥터 설정
+        // 배경 및 이미지 로딩
+        const bgImg = new Image();
+        bgImg.src = "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop";
+
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const playerX = 100, monsterX = 650;
-        let pAnim = 0;
 
-        // 인벤토리 슬롯 초기화 (16칸)
-        function initInventory() {
+        function initInven() {
             const grid = document.getElementById('invenGrid');
             grid.innerHTML = '';
             for(let i=0; i<16; i++) {
@@ -371,13 +347,15 @@
                 slot.className = 'inven-slot';
                 if(i === 0) {
                     slot.classList.add('active');
-                    slot.innerText = '🗡️';
+                    let img = document.createElement('img');
+                    img.id = 'invenSlotImg';
+                    img.src = weapons[0].img;
+                    slot.appendChild(img);
                 }
                 grid.appendChild(slot);
             }
         }
 
-        // 확률 계산기 (50성 체계)
         function getRates(star) {
             if (star < 10) return { success: 95 - star * 2, drop: 0, destroy: 0 };
             if (star < 20) return { success: Math.round(65 - (star-10)*1.5), drop: Math.round(20 + (star-10)), destroy: 0 };
@@ -394,7 +372,6 @@
             return { success: 0, drop: 0, destroy: 0 };
         }
 
-        // 나눗셈 문제 생성 (3학년 2학기: 두/세자리 ÷ 한자리, 나머지 포함)
         function generateQuiz() {
             const is3D = Math.random() < 0.5;
             const divisor = Math.floor(Math.random() * 8) + 2;
@@ -423,65 +400,68 @@
         }
 
         function renderQuiz() {
-            document.getElementById('quizQuestion').innerText = currentQuiz.question;
-            const container = document.getElementById('optionsContainer');
-            container.innerHTML = '';
+            document.getElementById('quizQ').innerText = currentQuiz.question;
+            const box = document.getElementById('optsBox');
+            box.innerHTML = '';
             currentQuiz.options.forEach(opt => {
                 let btn = document.createElement('button');
-                btn.className = 'option-btn';
+                btn.className = 'opt-btn';
                 btn.innerText = opt;
                 btn.onclick = () => checkAnswer(opt);
-                container.appendChild(btn);
+                box.appendChild(btn);
             });
             updateUI();
         }
 
         function updateUI() {
             let rates = getRates(currentStar);
-            document.getElementById('starDisplay').innerText = `★ ${currentStar} / 50`;
-            document.getElementById('sucRateTxt').innerText = `${rates.success}%`;
-            document.getElementById('dropRateTxt').innerText = `${rates.drop}%`;
-            document.getElementById('desRateTxt').innerText = `${rates.destroy}%`;
+            document.getElementById('starTxt').innerText = `★ ${currentStar} / 50성`;
+            document.getElementById('topStarBadge').innerText = `★ ${currentStar}성`;
+            document.getElementById('sucRate').innerText = `${rates.success}%`;
+            document.getElementById('dropRate').innerText = `${rates.drop}%`;
+            document.getElementById('desRate').innerText = `${rates.destroy}%`;
 
             let curWeapon = weapons[0];
             for(let w of weapons) {
                 if(currentStar >= w.level) curWeapon = w;
             }
-            document.getElementById('weaponName').innerText = curWeapon.name;
-            document.getElementById('itemSlotIcon').innerText = curWeapon.icon;
-            document.getElementById('topLvBadge').innerText = `현재 장비 단계: ★${currentStar}`;
+            document.getElementById('itemName').innerText = curWeapon.name;
+            document.getElementById('itemImg').src = curWeapon.img;
+
+            let invenImg = document.getElementById('invenSlotImg');
+            if(invenImg) invenImg.src = curWeapon.img;
         }
 
         function checkAnswer(selected) {
             if(isDestroyed) {
-                alert("장비가 파괴되었습니다! 초기화 후 다시 도전하세요.");
+                alert("무기가 파괴되었습니다! 모달 창에서 초기화 후 도전하세요.");
                 return;
             }
             if(selected === currentQuiz.correct) {
-                runStarforceAnimation();
+                runStarforceAnim();
             } else {
-                alert(`❌ 오답입니다!\n정답은 [${currentQuiz.correct}] 입니다.`);
+                alert(`❌ 오답입니다!\n정답: ${currentQuiz.correct}`);
                 generateQuiz();
             }
         }
 
-        function runStarforceAnimation() {
+        function runStarforceAnim() {
             const modal = document.getElementById('sfModal');
-            const hammer = document.getElementById('hammerEl');
+            const hammer = document.getElementById('hammerIcon');
             const title = document.getElementById('modalTitle');
             const desc = document.getElementById('modalDesc');
-            const btn = document.getElementById('confirmBtn');
+            const btn = document.getElementById('modalBtn');
 
             modal.style.display = 'flex';
-            hammer.className = 'hammer-icon swing';
+            hammer.className = 'hammer swing';
             hammer.innerText = '🔨';
-            title.innerText = '스타포스 강화 중...';
+            title.innerText = '강화 중...';
             title.style.color = '#f1c40f';
-            desc.innerText = '주문서의 힘이 장비에 주입되고 있습니다!';
+            desc.innerText = '주문서의 힘이 무기에 주입되는 중입니다!';
             btn.style.display = 'none';
 
             setTimeout(() => {
-                hammer.className = 'hammer-icon';
+                hammer.className = 'hammer';
                 let rates = getRates(currentStar);
                 let rand = Math.random() * 100;
 
@@ -490,19 +470,19 @@
                     hammer.innerText = '✨';
                     title.innerText = 'SUCCESS!';
                     title.style.color = '#2ecc71';
-                    desc.innerText = `축하합니다! ★ ${currentStar}성 강화에 성공했습니다!`;
+                    desc.innerText = `강화 성공! ★ ${currentStar}성에 도달했습니다!`;
                 } else if(rand < rates.success + rates.drop) {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
                     title.innerText = 'FAIL (단계 하락)';
                     title.style.color = '#e67e22';
-                    desc.innerText = `강화에 실패하여 ★ ${currentStar}성으로 떨어졌습니다.`;
+                    desc.innerText = `아쉽게 실패하여 ★ ${currentStar}성으로 하락했습니다.`;
                 } else {
                     isDestroyed = true;
                     hammer.innerText = '💥';
                     title.innerText = 'DESTROYED!';
                     title.style.color = '#e74c3c';
-                    desc.innerText = '앗! 장비가 파괴되었습니다. (처음부터 다시)';
+                    desc.innerText = '장비가 파괴되었습니다! 0성부터 다시 시작해야 합니다.';
                     btn.innerText = '0성부터 다시 시작';
                 }
 
@@ -521,31 +501,53 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
-        // 캔버스 애니메이션
-        function drawScene() {
+        // 헤네시스 지형 캔버스 그리기
+        let animOffset = 0;
+        function drawHenesys() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            pAnim += 0.05;
+            animOffset += 0.04;
 
-            // 배경 풀밭
-            ctx.fillStyle = '#27ae60';
-            ctx.fillRect(0, 160, canvas.width, 60);
+            // 하늘 배경
+            ctx.fillStyle = '#64b5f6';
+            ctx.fillRect(0, 0, canvas.width, 180);
+
+            // 헤네시스 돌담 & 풀밭 (올려주신 사진 속 지형 구조)
+            ctx.fillStyle = '#795548'; // 돌담 바탕
+            ctx.fillRect(0, 180, canvas.width, 80);
+
+            // 돌담 텍스처
+            ctx.fillStyle = '#5d4037';
+            for(let x=0; x<canvas.width; x+=40) {
+                ctx.fillRect(x, 200, 38, 18);
+                ctx.fillRect(x + 20, 222, 38, 18);
+                ctx.fillRect(x, 244, 38, 16);
+            }
+
+            // 상단 녹색 풀밭 레이어
+            ctx.fillStyle = '#4caf50';
+            ctx.fillRect(0, 175, canvas.width, 10);
+            ctx.fillStyle = '#81c784';
+            ctx.fillRect(0, 175, canvas.width, 3);
+
+            // 헤네시스 주황버섯 몬스터
+            let mY = 150 + Math.sin(animOffset)*4;
+            ctx.fillStyle = '#ff9800';
+            ctx.beginPath();
+            ctx.arc(650, mY, 22, Math.PI, 0);
+            ctx.fill();
+            ctx.fillStyle = '#fff3e0';
+            ctx.fillRect(638, mY, 24, 18);
 
             // 캐릭터
-            ctx.fillStyle = '#e74c3c';
-            ctx.fillRect(playerX, 110 + Math.sin(pAnim)*2, 25, 45);
+            ctx.fillStyle = '#e91e63';
+            ctx.fillRect(120, 140, 22, 38);
 
-            // 몬스터 (슬라임)
-            ctx.fillStyle = '#2ecc71';
-            ctx.beginPath();
-            ctx.arc(monsterX, 145 + Math.cos(pAnim)*3, 18, Math.PI, 0);
-            ctx.fill();
-
-            requestAnimationFrame(drawScene);
+            requestAnimationFrame(drawHenesys);
         }
 
-        initInventory();
+        initInven();
         generateQuiz();
-        drawScene();
+        drawHenesys();
     </script>
 </body>
 </html>
