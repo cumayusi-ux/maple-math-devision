@@ -19,8 +19,8 @@
         }
 
         body {
-            background: #110e21;
-            color: #fff;
+            background: #f4f6fb;
+            color: #2c3e50;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,10 +30,10 @@
         }
 
         h1 {
-            color: #ffeb3b;
-            text-shadow: 2px 2px 0px #e67e22, -1px -1px 0px #000;
+            color: #d35400;
+            text-shadow: 2px 2px 0px #f39c12, -1px -1px 0px #fff;
             margin-bottom: 8px;
-            font-size: 22px;
+            font-size: 24px;
             letter-spacing: 1px;
             text-align: center;
         }
@@ -51,10 +51,10 @@
             position: relative;
             width: 100%;
             height: 190px;
-            border: 4px solid #ffb74d;
+            border: 4px solid #f39c12;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
             background: #81c784;
         }
 
@@ -63,13 +63,13 @@
             height: 100%;
         }
 
-        /* 2. 하단 UI 영역 (태블릿 가로 나란히 배치) */
+        /* 2. 하단 UI 영역 (밝은 화이트 파스텔 테마) */
         .sf-window {
-            background: linear-gradient(to bottom, rgba(40, 25, 75, 0.95), rgba(18, 10, 40, 0.95));
-            border: 4px solid #ffb74d;
+            background: #ffffff;
+            border: 4px solid #f39c12;
             border-radius: 18px;
             padding: 12px 16px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -79,10 +79,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px dashed #ffb74d;
+            border-bottom: 2px dashed #f39c12;
             padding-bottom: 6px;
-            color: #ffeb3b;
+            color: #d35400;
             font-size: 16px;
+            font-weight: bold;
         }
 
         .sf-landscape-grid {
@@ -97,26 +98,27 @@
         }
 
         .sf-card-left {
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid #ab47bc;
+            background: #fdfefe;
+            border: 2px solid #8e44ad;
             border-radius: 14px;
             padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .item-preview {
             width: 75px; height: 75px;
             background: #fff;
-            border: 3px solid #ffeb3b;
+            border: 3px solid #f1c40f;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 4px 0;
-            box-shadow: 0 0 15px rgba(255, 235, 59, 0.6);
+            box-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
         }
 
         .item-preview img {
@@ -127,11 +129,11 @@
 
         .item-title {
             font-size: 17px;
-            color: #ffeb3b;
-            text-shadow: 1px 1px 2px #000;
+            color: #8e44ad;
+            font-weight: bold;
         }
 
-        /* 22개 별 슬롯 박스 */
+        /* 22개 별 슬롯 UI */
         .stars-container {
             display: flex;
             flex-wrap: wrap;
@@ -140,42 +142,44 @@
             max-width: 280px;
             margin: 4px 0;
             padding: 4px 8px;
-            background: rgba(0,0,0,0.3);
+            background: #f4f6f7;
             border-radius: 8px;
+            border: 1px solid #e5e8e8;
         }
 
         .star-slot {
             font-size: 15px;
-            color: #757575;
+            color: #bdc3c7;
             transition: all 0.2s;
         }
 
         .star-slot.filled {
-            color: #ffeb3b;
-            text-shadow: 0 0 6px #ffca28;
+            color: #f1c40f;
+            text-shadow: 0 0 4px #f39c12;
             transform: scale(1.1);
         }
 
         .stars-count-txt {
-            color: #f1c40f;
+            color: #d35400;
             font-size: 15px;
             font-weight: bold;
         }
 
         .rates-box-compact {
             width: 100%;
-            font-size: 12px;
-            background: rgba(0,0,0,0.35);
+            font-size: 13px;
+            background: #eaeded;
             padding: 6px 10px;
             border-radius: 8px;
             display: flex;
             justify-content: space-around;
             margin-top: 4px;
+            color: #2c3e50;
         }
 
         .quiz-panel-right {
-            background: rgba(0, 0, 0, 0.45);
-            border: 2px solid #26c6da;
+            background: #e8f8f5;
+            border: 2px solid #16a085;
             border-radius: 14px;
             padding: 10px 14px;
             display: flex;
@@ -185,10 +189,10 @@
         }
 
         .quiz-q {
-            font-size: 24px;
-            color: #fff;
+            font-size: 26px;
+            color: #2c3e50;
+            font-weight: bold;
             margin: 6px 0;
-            text-shadow: 2px 2px 3px #000;
         }
 
         .quiz-opts {
@@ -198,29 +202,29 @@
         }
 
         .opt-btn {
-            background: linear-gradient(to bottom, #42a5f5, #1e88e5);
+            background: linear-gradient(to bottom, #3498db, #2980b9);
             color: #fff;
             border: 2px solid #fff;
-            padding: 8px 10px;
-            font-size: 15px;
+            padding: 9px 10px;
+            font-size: 16px;
             border-radius: 10px;
             cursor: pointer;
-            box-shadow: 0 3px 0 #1565c0;
+            box-shadow: 0 3px 0 #1f618d;
             transition: background 0.15s, transform 0.15s;
         }
 
         .opt-btn:hover {
-            background: linear-gradient(to bottom, #ffca28, #ffa726);
-            color: #000;
-            box-shadow: 0 3px 0 #e65100;
+            background: linear-gradient(to bottom, #f39c12, #e67e22);
+            color: #fff;
+            box-shadow: 0 3px 0 #d35400;
         }
 
         .opt-btn.wrong-shake {
             animation: shake 0.4s ease-in-out;
-            background: linear-gradient(to bottom, #e53935, #c62828) !important;
-            border-color: #ff8a80 !important;
+            background: linear-gradient(to bottom, #e74c3c, #c0392b) !important;
+            border-color: #fadbd8 !important;
             color: #fff !important;
-            box-shadow: 0 3px 0 #b71c1c !important;
+            box-shadow: 0 3px 0 #922b21 !important;
         }
 
         @keyframes shake {
@@ -235,7 +239,7 @@
         .modal-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.6);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -244,13 +248,13 @@
         }
 
         .modal-box {
-            background: linear-gradient(to bottom, #3f51b5, #1a237e);
-            border: 4px solid #ffeb3b;
+            background: #ffffff;
+            border: 4px solid #f39c12;
             border-radius: 18px;
             width: 320px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 0 30px #ffeb3b;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         .hammer { font-size: 50px; display: inline-block; margin-bottom: 8px; }
@@ -261,15 +265,16 @@
         }
 
         .m-btn {
-            background: #ffeb3b;
-            color: #000;
+            background: #f1c40f;
+            color: #2c3e50;
             border: none;
             padding: 8px 20px;
             font-size: 15px;
             border-radius: 10px;
             cursor: pointer;
             margin-top: 12px;
-            box-shadow: 0 3px 0 #f57f17;
+            font-weight: bold;
+            box-shadow: 0 3px 0 #f39c12;
         }
     </style>
 </head>
@@ -303,15 +308,15 @@
                     <div class="stars-count-txt" id="starTxt">★ 0 / 22성</div>
 
                     <div class="rates-box-compact">
-                        <span>성공: <b id="sucRate" style="color:#2ecc71;">95%</b></span>
-                        <span>하락: <b id="dropRate" style="color:#ff9800;">0%</b></span>
-                        <span>파괴: <b id="desRate" style="color:#e74c3c;">0%</b></span>
+                        <span>성공: <b id="sucRate" style="color:#27ae60;">95%</b></span>
+                        <span>하락: <b id="dropRate" style="color:#e67e22;">0%</b></span>
+                        <span>파괴: <b id="desRate" style="color:#c0392b;">0%</b></span>
                     </div>
                 </div>
 
                 <!-- 우측: 나눗셈 문제 패널 -->
                 <div class="quiz-panel-right">
-                    <div style="font-size: 13px; color: #ffeb3b;">⚠️ 찍기 금지! 오답 시 스타포스가 하락합니다!</div>
+                    <div style="font-size: 13px; color: #c0392b; font-weight: bold;">⚠️ 찍기 금지! 오답 시 스타포스가 하락합니다!</div>
                     <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
                     <div class="quiz-opts" id="optsBox"></div>
                 </div>
@@ -323,14 +328,14 @@
     <div id="sfModal" class="modal-bg">
         <div class="modal-box">
             <div id="hammerIcon" class="hammer">🔨</div>
-            <h2 id="modalTitle" style="color:#ffeb3b; font-size:22px;">강화 진행 중...</h2>
-            <div id="modalDesc" style="font-size:14px; margin-top:6px; color:#e0e0e0;">주문서의 기운이 모입니다!</div>
+            <h2 id="modalTitle" style="color:#d35400; font-size:22px;">강화 진행 중...</h2>
+            <div id="modalDesc" style="font-size:14px; margin-top:6px; color:#34495e;">주문서의 기운이 모입니다!</div>
             <button id="modalBtn" class="m-btn" onclick="closeModal()" style="display:none;">확인</button>
         </div>
     </div>
 
     <script>
-        const MAX_STARS = 22; // 최대 22성으로 조정
+        const MAX_STARS = 22;
 
         const weapons = [
             { level: 0, name: "초보자의 목검", img: "https://maplestory.io/api/KMS/352/item/1302000/icon" },
@@ -351,19 +356,15 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // 22성 전용 확률 밸런싱
         function getRates(star) {
             if (star >= MAX_STARS) return { success: 0, drop: 0, destroy: 0 };
             
             if (star < 10) {
-                // 0~9성: 성공 95% -> 75%, 하락/파괴 0%
                 return { success: 95 - star * 2, drop: 0, destroy: 0 };
             } else if (star < 15) {
-                // 10~14성: 성공 70% -> 50%, 하락 30% -> 50%, 파괴 0%
                 let suc = 70 - (star - 10) * 5;
                 return { success: suc, drop: 100 - suc, destroy: 0 };
             } else {
-                // 15~21성: 성공 45% -> 30%, 하락 50%, 파괴 5% -> 20%
                 let suc = Math.max(30, 45 - (star - 15) * 3);
                 let des = Math.min(20, 5 + (star - 15) * 2.5);
                 let drop = 100 - suc - des;
@@ -371,7 +372,6 @@
             }
         }
 
-        // 22개 별 슬롯 생성
         function renderStars() {
             const box = document.getElementById('starsBox');
             box.innerHTML = '';
@@ -468,7 +468,7 @@
             hammer.className = 'hammer';
             hammer.innerText = '⚠️';
             title.innerText = '오답 페널티 발동!';
-            title.style.color = '#e74c3c';
+            title.style.color = '#c0392b';
 
             if (currentStar > 0) {
                 if (currentStar >= 15 && Math.random() < 0.1) {
@@ -507,7 +507,7 @@
             hammer.className = 'hammer swing';
             hammer.innerText = '🔨';
             title.innerText = '민형쌤의 강화 주문서!';
-            title.style.color = '#ffeb3b';
+            title.style.color = '#d35400';
             desc.innerText = '별의 기운이 퐁퐁 솟아납니다!';
             btn.style.display = 'none';
 
@@ -520,19 +520,19 @@
                     currentStar++;
                     hammer.innerText = '🌟';
                     title.innerText = 'SUCCESS!';
-                    title.style.color = '#2ecc71';
-                    desc.innerText = `성공! ★ ${currentStar}성으로 캐릭터가 강해졌어요!`;
+                    title.style.color = '#27ae60';
+                    desc.innerText = `성공! ★ ${currentStar}성으로 캐릭터가 꾸며졌어요!`;
                 } else if(rand < rates.success + rates.drop) {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
                     title.innerText = 'FAIL (단계 하락)';
-                    title.style.color = '#ff9800';
+                    title.style.color = '#e67e22';
                     desc.innerText = `아쉬워요! ★ ${currentStar}성으로 내려갔어요.`;
                 } else {
                     isDestroyed = true;
                     hammer.innerText = '💥';
                     title.innerText = 'DESTROYED!';
-                    title.style.color = '#e74c3c';
+                    title.style.color = '#c0392b';
                     desc.innerText = '장비가 파괴되었어요! 0성부터 다시 시도해보세요.';
                     btn.innerText = '0성부터 다시 시작';
                 }
@@ -552,15 +552,17 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
-        // 🎨 치이카와(Chiikawa) 캔버스
+        // 🎨 공식 치이카와 가이드라인 기반 캔버스 연출 및 단계별 꾸미기 시스템
         let animOffset = 0;
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             animOffset += 0.05;
 
+            // 1. 파란 하늘 배경
             ctx.fillStyle = '#81d4fa';
             ctx.fillRect(0, 0, canvas.width, 130);
 
+            // 2. 나무 배경
             ctx.fillStyle = '#6d4c41';
             ctx.fillRect(90, 50, 18, 80);
             ctx.fillStyle = '#4caf50';
@@ -571,78 +573,115 @@
             ctx.fillStyle = '#66bb6a';
             ctx.beginPath(); ctx.arc(canvas.width - 100, 32, 40, 0, Math.PI * 2); ctx.fill();
 
+            // 3. 지형 (바닥 녹색 풀밭)
             ctx.fillStyle = '#a5d6a7';
             ctx.fillRect(0, 130, canvas.width, 60);
             ctx.fillStyle = '#81c784';
             ctx.fillRect(0, 130, canvas.width, 10);
 
+            // 4. 💖 치이카와 원작 캐릭터 정밀 드로잉 & 단계별 꾸미기 연출
             const cx = canvas.width / 2;
-            const cy = 100 + Math.sin(animOffset) * 3;
+            const cy = 100 + Math.sin(animOffset) * 3; // 둥실둥실 숨쉬기 바운스
 
             ctx.save();
 
-            // 15성 이상: 오라 효과
+            // [꾸미기 4단계] ★15성 이상: 파스텔 황금 오라 발동
             if (currentStar >= 15) {
                 ctx.shadowBlur = 20 + Math.sin(animOffset) * 5;
-                ctx.shadowColor = "#ffeb3b";
-                ctx.fillStyle = "rgba(255, 235, 59, 0.4)";
+                ctx.shadowColor = "#f39c12";
+                ctx.fillStyle = "rgba(241, 196, 15, 0.45)";
                 ctx.beginPath();
-                ctx.arc(cx, cy, 55, 0, Math.PI * 2);
+                ctx.arc(cx, cy, 58, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            let isHachiware = currentStar >= 5 && currentStar < 12;
-            let isUsagi = currentStar >= 12 && currentStar < 18;
+            // 캐릭터 종류 판정 (단계별 변신)
+            let isHachiware = currentStar >= 10 && currentStar < 15;
+            let isUsagi = currentStar >= 15;
 
+            // 귀 및 머리 특징
             ctx.fillStyle = isUsagi ? "#fff176" : "#ffffff";
-            ctx.strokeStyle = "#212121";
+            ctx.strokeStyle = "#3e2723"; // 진한 브라운 외곽선
             ctx.lineWidth = 3;
 
             if (isUsagi) {
+                // 우사기 (긴 토끼 귀)
                 ctx.beginPath(); ctx.ellipse(cx - 18, cy - 35, 8, 22, -0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
                 ctx.beginPath(); ctx.ellipse(cx + 18, cy - 35, 8, 22, 0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
             } else {
+                // 치이카와 / 하치와레 (동글 곰귀)
                 ctx.beginPath(); ctx.arc(cx - 24, cy - 22, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
                 ctx.beginPath(); ctx.arc(cx + 24, cy - 22, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
                 if (isHachiware) {
+                    // 하치와레 파란머리 무늬
                     ctx.fillStyle = "#42a5f5";
                     ctx.beginPath(); ctx.arc(cx - 24, cy - 22, 10, 0, Math.PI * 2); ctx.fill();
                     ctx.beginPath(); ctx.arc(cx + 24, cy - 22, 10, 0, Math.PI * 2); ctx.fill();
                 }
             }
 
+            // 치이카와 하얀 동글 몸통 (왕대두 + 소형 몸집)
             ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
             ctx.beginPath(); ctx.ellipse(cx, cy, 32, 28, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
+            // [꾸미기 1단계] ★5~9성: 귀여운 파스텔 멜빵 옷 장착
+            if (currentStar >= 5 && currentStar < 18) {
+                ctx.fillStyle = "#aed581";
+                ctx.beginPath();
+                ctx.fillRect(cx - 22, cy + 8, 44, 16);
+                ctx.strokeRect(cx - 22, cy + 8, 44, 16);
+                // 멜빵 끈
+                ctx.fillStyle = "#7cb342";
+                ctx.fillRect(cx - 16, cy + 2, 6, 8);
+                ctx.fillRect(cx + 10, cy + 2, 6, 8);
+            }
+
+            // [꾸미기 3단계] ★18성 이상: 영웅 기사 흉갑 전사 코스튬
             if (currentStar >= 18) {
-                ctx.fillStyle = currentStar >= 22 ? "#ffee58" : "#9e9e9e";
+                ctx.fillStyle = currentStar >= 22 ? "#ffee58" : "#b0bec5";
                 ctx.fillRect(cx - 20, cy + 5, 40, 20);
                 ctx.strokeRect(cx - 20, cy + 5, 40, 20);
             }
 
+            // 원작 볼터치 (핑크 뺨)
             ctx.fillStyle = "#ff80ab";
             ctx.beginPath(); ctx.arc(cx - 18, cy + 2, 5, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.arc(cx + 18, cy + 2, 5, 0, Math.PI * 2); ctx.fill();
 
+            // 맑고 무구한 동그란 눈
             ctx.fillStyle = "#212121";
             ctx.beginPath(); ctx.arc(cx - 11, cy - 2, 3.5, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.arc(cx + 11, cy - 2, 3.5, 0, Math.PI * 2); ctx.fill();
 
+            // 눈동자 하이라이트
             ctx.fillStyle = "#ffffff";
             ctx.beginPath(); ctx.arc(cx - 12, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.arc(cx + 10, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
 
+            // 입 ('ㅅ'자 모양)
             ctx.strokeStyle = "#212121";
             ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(cx - 5, cy + 8); ctx.lineTo(cx, cy + 11); ctx.lineTo(cx + 5, cy + 8); ctx.stroke();
 
+            // 귀여운 동그란 손 (Paws)
             ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
             ctx.beginPath(); ctx.arc(cx - 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
             ctx.beginPath(); ctx.arc(cx + 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
-            if (currentStar >= 20) {
-                ctx.fillStyle = "#ffeb3b";
+            // [꾸미기 2단계] ★10성 이상: 작은 무기/목검 손에 쥐어주기
+            if (currentStar >= 10) {
+                ctx.fillStyle = "#8d6e63";
+                ctx.fillRect(cx + 28, cy - 10, 5, 25);
+                ctx.fillStyle = "#f1c40f";
+                ctx.fillRect(cx + 25, cy + 5, 11, 4);
+            }
+
+            // [꾸미기 5단계] ★19성 이상: 찬란한 황금 왕관 착용
+            if (currentStar >= 19) {
+                ctx.fillStyle = "#f1c40f";
+                ctx.strokeStyle = "#d35400";
+                ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(cx - 12, cy - 26);
                 ctx.lineTo(cx - 16, cy - 42);
