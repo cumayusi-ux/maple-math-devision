@@ -351,7 +351,7 @@
             <div class="hammer">🌟</div>
             <h2 style="color:#d35400; font-size:20px;">모험가 이름을 입력하세요!</h2>
             <div style="font-size:13px; color:#34495e; margin-top:5px;">내 이름이 들어간 무기를 강화해보세요!</div>
-            <input type="text" id="userNameInput" class="name-input" placeholder="예: 이민형" maxlength="8">
+            <input type="text" id="userNameInput" class="name-input" placeholder="예: 김민형" maxlength="8">
             <button class="m-btn" onclick="startAdventure()">모험 시작하기!</button>
         </div>
     </div>
@@ -385,14 +385,14 @@
         let currentStar = 0;
         let currentQuiz = {};
 
-        // 22개의 큰 별 위치: 왼쪽부터 깔끔하게 정렬 (2줄로 나누어 꽉 채움)
+        // 22개의 큰 별 위치: 왼쪽부터 똭똭 정렬 (2줄 x 11개)
         const bigStarsGrid = [];
         for (let i = 0; i < MAX_STARS; i++) {
-            const col = i % 11; // 1줄에 11개씩
-            const row = Math.floor(i / 11); // 총 2줄
+            const col = i % 11;
+            const row = Math.floor(i / 11);
             bigStarsGrid.push({
-                x: 55 + col * 78,
-                y: 35 + row * 40
+                x: 50 + col * 82,
+                y: 32 + row * 38
             });
         }
 
@@ -609,68 +609,68 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
-        // 🎨 밤하늘 배경 + 왼쪽부터 똭똭 꽉 채워지는 큼직한 별 연출
+        // 🎨 캔버스 밤하늘 + 왕별 모션 연출
         let animOffset = 0;
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             animOffset += 0.05;
 
-            // 1. 🌌 영롱하고 신비로운 딥블루 밤하늘 배경 (고정)
+            // 1. 🌌 신비로운 밤하늘 배경
             let nightGrad = ctx.createLinearGradient(0, 0, 0, 130);
-            nightGrad.addColorStop(0, '#0f172a'); // 딥 나이트 블루
-            nightGrad.addColorStop(0.6, '#1e1b4b'); // 퍼플 블루
-            nightGrad.addColorStop(1, '#312e81'); // 은하수 블루
+            nightGrad.addColorStop(0, '#0a0f24');
+            nightGrad.addColorStop(0.6, '#151c3d');
+            nightGrad.addColorStop(1, '#232b5d');
             ctx.fillStyle = nightGrad;
             ctx.fillRect(0, 0, canvas.width, 130);
 
-            // 2. 🌟 왼쪽부터 1성씩 커다란 왕별(★)이 똭똭 채워지는 연출!
+            // 2. 🌟 왼쪽부터 1성씩 큼직하고 영롱하게 채워지는 황금 왕별
             for (let i = 0; i < currentStar; i++) {
                 let pos = bigStarsGrid[i];
-                let pulse = Math.sin(animOffset * 3 + i) * 3; // 은은한 반짝임
-                
+                let pulse = Math.sin(animOffset * 3 + i) * 3;
+
                 ctx.save();
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
 
-                // 왕별 뒤 노란 후광
-                ctx.shadowColor = "#f1c40f";
-                ctx.shadowBlur = 18;
-                ctx.fillStyle = "#ffe082";
-                ctx.font = `${30 + pulse}px Maplestory`;
+                // 후광 광채
+                ctx.shadowColor = "#f39c12";
+                ctx.shadowBlur = 16;
+                ctx.fillStyle = "#fff176";
+                ctx.font = `${32 + pulse}px Maplestory`;
                 ctx.fillText('★', pos.x, pos.y);
 
-                // 메인 선명한 황금 왕별
+                // 전면 선명한 황금 별
                 ctx.fillStyle = "#f1c40f";
-                ctx.font = `${26 + pulse}px Maplestory`;
+                ctx.font = `${28 + pulse}px Maplestory`;
                 ctx.fillText('★', pos.x, pos.y);
 
                 ctx.restore();
             }
 
-            // 3. 은은한 달님 반짝임 (우측 상단)
+            // 3. 우측 달님
             ctx.save();
             ctx.fillStyle = "#fffde7";
             ctx.shadowColor = "#fff59d";
-            ctx.shadowBlur = 15;
-            ctx.font = "28px Maplestory";
-            ctx.fillText('🌙', canvas.width - 45, 35);
+            ctx.shadowBlur = 12;
+            ctx.font = "26px Maplestory";
+            ctx.fillText('🌙', canvas.width - 40, 30);
             ctx.restore();
 
-            // 4. 밤하늘 실루엣 나무
-            ctx.fillStyle = '#331800';
+            // 4. 밤나무 실루엣
+            ctx.fillStyle = '#2d1b0e';
             ctx.fillRect(90, 60, 18, 70);
-            ctx.fillStyle = '#1b4332';
+            ctx.fillStyle = '#1e3a29';
             ctx.beginPath(); ctx.arc(99, 50, 34, 0, Math.PI * 2); ctx.fill();
 
-            ctx.fillStyle = '#331800';
+            ctx.fillStyle = '#2d1b0e';
             ctx.fillRect(canvas.width - 110, 50, 20, 80);
-            ctx.fillStyle = '#2d6a4f';
+            ctx.fillStyle = '#143622';
             ctx.beginPath(); ctx.arc(canvas.width - 100, 42, 38, 0, Math.PI * 2); ctx.fill();
 
-            // 5. 밤 언덕 바닥
-            ctx.fillStyle = '#2d6a4f';
+            // 5. 밤 풀밭
+            ctx.fillStyle = '#1e3a29';
             ctx.fillRect(0, 130, canvas.width, 60);
-            ctx.fillStyle = '#1b4332';
+            ctx.fillStyle = '#143622';
             ctx.fillRect(0, 130, canvas.width, 10);
 
             // 6. 치이카와 캐릭터 연출
@@ -746,7 +746,7 @@
 
             ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
             ctx.beginPath(); ctx.arc(cx - 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-            ctx.beginPath(); ctx.arc(cx + 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); stroke();
+            ctx.beginPath(); ctx.arc(cx + 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
             if (currentStar >= 10) {
                 ctx.fillStyle = "#8d6e63";
