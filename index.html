@@ -175,7 +175,6 @@
             font-weight: bold;
         }
 
-        /* 성공 / 실패(하락) 2가지 확률만 깔끔하게 표시 */
         .rates-box-compact {
             width: 100%;
             font-size: 14px;
@@ -341,7 +340,7 @@
             <div id="hammerIcon" class="hammer">🔨</div>
             <h2 id="modalTitle" style="color:#d35400; font-size:22px;">강화 진행 중...</h2>
             <div id="modalDesc" style="font-size:14px; margin-top:6px; color:#34495e;">주문서의 기운이 모입니다!</div>
-            <button id="modalBtn" class="m-btn" onclick="closeModal()" style="display:none;">확인</button>
+            <button id="modalBtn" class="m-btn" onclick="closeModal()" style="display:none;">문제 더 풀기</button>
         </div>
     </div>
 
@@ -511,7 +510,7 @@
                 desc.innerText = '틀렸습니다! 정답을 다시 신중히 생각해보세요. (0성은 하락하지 않아요)';
             }
 
-            btn.innerText = '다시 풀기';
+            btn.innerText = '문제 더 풀기';
             btn.style.display = 'inline-block';
             updateUI();
             generateQuiz();
@@ -556,7 +555,7 @@
                     desc.innerText = `아쉬워요! ★ ${currentStar}성으로 내려갔어요. (파괴 없음!)`;
                 }
 
-                btn.innerText = '확인';
+                btn.innerText = '문제 더 풀기';
                 btn.style.display = 'inline-block';
                 updateUI();
                 generateQuiz();
