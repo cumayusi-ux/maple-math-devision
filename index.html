@@ -63,7 +63,7 @@
             height: 100%;
         }
 
-        /* 2. 하단 UI 영역 (밝은 화이트 파스텔 테마) */
+        /* 2. 하단 UI 영역 (화이트 파스텔 테마) */
         .sf-window {
             background: #ffffff;
             border: 4px solid #f39c12;
@@ -133,18 +133,28 @@
             font-weight: bold;
         }
 
-        /* 22개 별 슬롯 UI */
+        /* 22개 별 슬롯 박스 (4 4 4 4 4 2 간격 띄우기) */
         .stars-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: center;
             gap: 2px;
-            max-width: 280px;
             margin: 4px 0;
-            padding: 4px 8px;
+            padding: 6px 12px;
             background: #f4f6f7;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid #e5e8e8;
+        }
+
+        .star-group {
+            display: flex;
+            gap: 2px;
+            margin-right: 8px; /* 4개 그룹별 오른쪽 간격 */
+        }
+
+        .star-group:last-child {
+            margin-right: 0;
         }
 
         .star-slot {
@@ -303,7 +313,7 @@
                         <img id="itemImg" src="https://maplestory.io/api/KMS/352/item/1302000/icon" alt="무기">
                     </div>
 
-                    <!-- 22개 별 슬롯 UI -->
+                    <!-- 22개 별 슬롯 (4-4-4-4-4-2 띄어쓰기) -->
                     <div class="stars-container" id="starsBox"></div>
                     <div class="stars-count-txt" id="starTxt">★ 0 / 22성</div>
 
@@ -372,15 +382,27 @@
             }
         }
 
+        // 22개 별 슬롯을 4 4 4 4 4 2 단위로 그룹화 생성
         function renderStars() {
             const box = document.getElementById('starsBox');
             box.innerHTML = '';
-            for (let i = 1; i <= MAX_STARS; i++) {
-                let span = document.createElement('span');
-                span.className = 'star-slot' + (i <= currentStar ? ' filled' : '');
-                span.innerText = i <= currentStar ? '★' : '☆';
-                box.appendChild(span);
-            }
+            
+            const groupSizes = [4, 4, 4, 4, 4, 2];
+            let starIndex = 1;
+
+            groupSizes.forEach(size => {
+                let groupDiv = document.createElement('div');
+                groupDiv.className = 'star-group';
+
+                for (let i = 0; i < size; i++) {
+                    let span = document.createElement('span');
+                    span.className = 'star-slot' + (starIndex <= currentStar ? ' filled' : '');
+                    span.innerText = starIndex <= currentStar ? '★' : '☆';
+                    groupDiv.appendChild(span);
+                    starIndex++;
+                }
+                box.appendChild(groupDiv);
+            });
         }
 
         function generateQuiz() {
@@ -552,17 +574,15 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
-        // 🎨 공식 치이카와 가이드라인 기반 캔버스 연출 및 단계별 꾸미기 시스템
+        // 🎨 치이카와 캔버스 연출
         let animOffset = 0;
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             animOffset += 0.05;
 
-            // 1. 파란 하늘 배경
             ctx.fillStyle = '#81d4fa';
             ctx.fillRect(0, 0, canvas.width, 130);
 
-            // 2. 나무 배경
             ctx.fillStyle = '#6d4c41';
             ctx.fillRect(90, 50, 18, 80);
             ctx.fillStyle = '#4caf50';
@@ -573,19 +593,16 @@
             ctx.fillStyle = '#66bb6a';
             ctx.beginPath(); ctx.arc(canvas.width - 100, 32, 40, 0, Math.PI * 2); ctx.fill();
 
-            // 3. 지형 (바닥 녹색 풀밭)
             ctx.fillStyle = '#a5d6a7';
             ctx.fillRect(0, 130, canvas.width, 60);
             ctx.fillStyle = '#81c784';
             ctx.fillRect(0, 130, canvas.width, 10);
 
-            // 4. 💖 치이카와 원작 캐릭터 정밀 드로잉 & 단계별 꾸미기 연출
             const cx = canvas.width / 2;
-            const cy = 100 + Math.sin(animOffset) * 3; // 둥실둥실 숨쉬기 바운스
+            const cy = 100 + Math.sin(animOffset) * 3;
 
             ctx.save();
 
-            // [꾸미기 4단계] ★15성 이상: 파스텔 황금 오라 발동
             if (currentStar >= 15) {
                 ctx.shadowBlur = 20 + Math.sin(animOffset) * 5;
                 ctx.shadowColor = "#f39c12";
@@ -595,81 +612,66 @@
                 ctx.fill();
             }
 
-            // 캐릭터 종류 판정 (단계별 변신)
             let isHachiware = currentStar >= 10 && currentStar < 15;
             let isUsagi = currentStar >= 15;
 
-            // 귀 및 머리 특징
             ctx.fillStyle = isUsagi ? "#fff176" : "#ffffff";
-            ctx.strokeStyle = "#3e2723"; // 진한 브라운 외곽선
+            ctx.strokeStyle = "#3e2723";
             ctx.lineWidth = 3;
 
             if (isUsagi) {
-                // 우사기 (긴 토끼 귀)
                 ctx.beginPath(); ctx.ellipse(cx - 18, cy - 35, 8, 22, -0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
                 ctx.beginPath(); ctx.ellipse(cx + 18, cy - 35, 8, 22, 0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
             } else {
-                // 치이카와 / 하치와레 (동글 곰귀)
                 ctx.beginPath(); ctx.arc(cx - 24, cy - 22, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
                 ctx.beginPath(); ctx.arc(cx + 24, cy - 22, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
                 if (isHachiware) {
-                    // 하치와레 파란머리 무늬
                     ctx.fillStyle = "#42a5f5";
                     ctx.beginPath(); ctx.arc(cx - 24, cy - 22, 10, 0, Math.PI * 2); ctx.fill();
                     ctx.beginPath(); ctx.arc(cx + 24, cy - 22, 10, 0, Math.PI * 2); ctx.fill();
                 }
             }
 
-            // 치이카와 하얀 동글 몸통 (왕대두 + 소형 몸집)
             ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
             ctx.beginPath(); ctx.ellipse(cx, cy, 32, 28, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
-            // [꾸미기 1단계] ★5~9성: 귀여운 파스텔 멜빵 옷 장착
             if (currentStar >= 5 && currentStar < 18) {
                 ctx.fillStyle = "#aed581";
                 ctx.beginPath();
                 ctx.fillRect(cx - 22, cy + 8, 44, 16);
                 ctx.strokeRect(cx - 22, cy + 8, 44, 16);
-                // 멜빵 끈
                 ctx.fillStyle = "#7cb342";
                 ctx.fillRect(cx - 16, cy + 2, 6, 8);
                 ctx.fillRect(cx + 10, cy + 2, 6, 8);
             }
 
-            // [꾸미기 3단계] ★18성 이상: 영웅 기사 흉갑 전사 코스튬
             if (currentStar >= 18) {
                 ctx.fillStyle = currentStar >= 22 ? "#ffee58" : "#b0bec5";
                 ctx.fillRect(cx - 20, cy + 5, 40, 20);
                 ctx.strokeRect(cx - 20, cy + 5, 40, 20);
             }
 
-            // 원작 볼터치 (핑크 뺨)
             ctx.fillStyle = "#ff80ab";
             ctx.beginPath(); ctx.arc(cx - 18, cy + 2, 5, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.arc(cx + 18, cy + 2, 5, 0, Math.PI * 2); ctx.fill();
 
-            // 맑고 무구한 동그란 눈
             ctx.fillStyle = "#212121";
             ctx.beginPath(); ctx.arc(cx - 11, cy - 2, 3.5, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.arc(cx + 11, cy - 2, 3.5, 0, Math.PI * 2); ctx.fill();
 
-            // 눈동자 하이라이트
             ctx.fillStyle = "#ffffff";
             ctx.beginPath(); ctx.arc(cx - 12, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.arc(cx + 10, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
 
-            // 입 ('ㅅ'자 모양)
             ctx.strokeStyle = "#212121";
             ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(cx - 5, cy + 8); ctx.lineTo(cx, cy + 11); ctx.lineTo(cx + 5, cy + 8); ctx.stroke();
 
-            // 귀여운 동그란 손 (Paws)
             ctx.fillStyle = isUsagi ? "#fff9c4" : "#ffffff";
             ctx.beginPath(); ctx.arc(cx - 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
             ctx.beginPath(); ctx.arc(cx + 28, cy + 10, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
-            // [꾸미기 2단계] ★10성 이상: 작은 무기/목검 손에 쥐어주기
             if (currentStar >= 10) {
                 ctx.fillStyle = "#8d6e63";
                 ctx.fillRect(cx + 28, cy - 10, 5, 25);
@@ -677,7 +679,6 @@
                 ctx.fillRect(cx + 25, cy + 5, 11, 4);
             }
 
-            // [꾸미기 5단계] ★19성 이상: 찬란한 황금 왕관 착용
             if (currentStar >= 19) {
                 ctx.fillStyle = "#f1c40f";
                 ctx.strokeStyle = "#d35400";
