@@ -385,6 +385,17 @@
         let currentStar = 0;
         let currentQuiz = {};
 
+        // 배경에 떠다니는 별 위치 정보 사전 생성
+        const backgroundStars = [];
+        for (let i = 0; i < MAX_STARS; i++) {
+            backgroundStars.push({
+                x: (i * 42 + 25) % (960 - 50) + 25,
+                y: (i * 23 + 15) % 100 + 15,
+                size: Math.random() * 4 + 8,
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -532,7 +543,7 @@
             modal.style.display = 'flex';
             hammer.className = 'hammer';
             hammer.innerText = '⚠️';
-            title.innerText = '틀렸어요!'; // 한글 수정
+            title.innerText = '틀렸어요!';
             title.style.color = '#c0392b';
 
             if (currentStar > 0) {
@@ -576,13 +587,13 @@
                 if(rand < rates.success) {
                     currentStar++;
                     hammer.innerText = '🌟';
-                    title.innerText = '맞았어요!'; // 한글 수정
+                    title.innerText = '맞았어요!';
                     title.style.color = '#27ae60';
-                    desc.innerText = `정답! ★ ${currentStar}성으로 ${playerName}의 장비가 강해졌어요!`;
+                    desc.innerText = `정답! ★ ${currentStar}성으로 ${playerName}의 장비와 배경이 업그레이드되었어요!`;
                 } else {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
-                    title.innerText = '틀렸어요! (단계 하락)'; // 한글 수정
+                    title.innerText = '틀렸어요! (단계 하락)';
                     title.style.color = '#e67e22';
                     desc.innerText = `아쉬워요! 정답을 맞히지 못해 ★ ${currentStar}성으로 내려갔어요.`;
                 }
@@ -598,30 +609,89 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
-        // 🎨 치이카와 캔버스 연출
+        // 🎨 치이카와 & 스타포스(★)에 따른 배경 실시간 업그레이드 캔버스
         let animOffset = 0;
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             animOffset += 0.05;
 
-            ctx.fillStyle = '#81d4fa';
+            // 1. 단계별 하늘 배경 색상 진화
+            if (currentStar >= 19) {
+                // 19~22성: 황금 마법 신전 하늘 (금빛 그라데이션)
+                let grad = ctx.createLinearGradient(0, 0, 0, 130);
+                grad.addColorStop(0, '#f9a825');
+                grad.addColorStop(1, '#fff59d');
+                ctx.fillStyle = grad;
+            } else if (currentStar >= 15) {
+                // 15~18성: 무지개 언덕 하늘 (파스텔 핑크/보라)
+                let grad = ctx.createLinearGradient(0, 0, 0, 130);
+                grad.addColorStop(0, '#ce93d8');
+                grad.addColorStop(1, '#b3e5fc');
+                ctx.fillStyle = grad;
+            } else if (currentStar >= 10) {
+                // 10~14성: 밤하늘 (딥블루)
+                let grad = ctx.createLinearGradient(0, 0, 0, 130);
+                grad.addColorStop(0, '#1a237e');
+                grad.addColorStop(1, '#3949ab');
+                ctx.fillStyle = grad;
+            } else if (currentStar >= 5) {
+                // 5~9성: 노을 하늘 (오렌지 핑크)
+                let grad = ctx.createLinearGradient(0, 0, 0, 130);
+                grad.addColorStop(0, '#ff7043');
+                grad.addColorStop(1, '#ffcc80');
+                ctx.fillStyle = grad;
+            } else {
+                // 0~4성: 기본 맑은 하늘
+                ctx.fillStyle = '#81d4fa';
+            }
             ctx.fillRect(0, 0, canvas.width, 130);
 
+            // 2. 🌟 스타포스 수치만큼 배경에 반짝이는 황금 별(★) 실시간 생성!
+            for (let i = 0; i < currentStar; i++) {
+                let star = backgroundStars[i];
+                let twinkle = Math.sin(animOffset * 3 + star.phase) * 0.3 + 0.7;
+                
+                ctx.save();
+                ctx.fillStyle = `rgba(255, 235, 59, ${twinkle})`;
+                ctx.shadowColor = "#f39c12";
+                ctx.shadowBlur = 8;
+                ctx.font = `${star.size * twinkle}px Maplestory`;
+                ctx.fillText('★', star.x, star.y);
+                ctx.restore();
+            }
+
+            // 15성 이상일 때 무지개 아치 그리기
+            if (currentStar >= 15) {
+                ctx.save();
+                ctx.lineWidth = 4;
+                const rainbowColors = ['#ff8a80', '#ffd180', '#ffff8d', '#ccff90', '#80d8ff', '#b388ff'];
+                rainbowColors.forEach((color, idx) => {
+                    ctx.strokeStyle = color;
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, 180, 160 - idx * 5, Math.PI, 0);
+                    ctx.stroke();
+                });
+                ctx.restore();
+            }
+
+            // 3. 나무 배경
             ctx.fillStyle = '#6d4c41';
             ctx.fillRect(90, 50, 18, 80);
-            ctx.fillStyle = '#4caf50';
+            ctx.fillStyle = currentStar >= 19 ? '#fbc02d' : '#4caf50';
             ctx.beginPath(); ctx.arc(99, 45, 36, 0, Math.PI * 2); ctx.fill();
 
             ctx.fillStyle = '#6d4c41';
             ctx.fillRect(canvas.width - 110, 40, 20, 90);
-            ctx.fillStyle = '#66bb6a';
+            ctx.fillStyle = currentStar >= 19 ? '#fbc02d' : '#66bb6a';
             ctx.beginPath(); ctx.arc(canvas.width - 100, 32, 40, 0, Math.PI * 2); ctx.fill();
 
-            ctx.fillStyle = '#a5d6a7';
+            // 4. 지형 (바닥 녹색/황금 풀밭)
+            ctx.fillStyle = currentStar >= 19 ? '#fff176' : '#a5d6a7';
             ctx.fillRect(0, 130, canvas.width, 60);
-            ctx.fillStyle = '#81c784';
+            ctx.fillStyle = currentStar >= 19 ? '#fbc02d' : '#81c784';
             ctx.fillRect(0, 130, canvas.width, 10);
 
+            // 5. 치이카와 캐릭터 연출
             const cx = canvas.width / 2;
             const cy = 100 + Math.sin(animOffset) * 3;
 
