@@ -199,6 +199,15 @@
             text-shadow: 2px 2px 4px #000;
         }
 
+        .wrong-msg {
+            color: #ff5252;
+            font-size: 16px;
+            font-weight: bold;
+            height: 22px;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
         .quiz-opts {
             display: flex;
             flex-direction: column;
@@ -315,6 +324,7 @@
             <div class="quiz-panel">
                 <div style="font-size: 14px; color: #b2ebf2;">정답을 맞히면 민형쌤의 주문서 강화가 시작됩니다!</div>
                 <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
+                <div class="wrong-msg" id="wrongMsg"></div>
                 <div class="quiz-opts" id="optsBox"></div>
             </div>
         </div>
@@ -331,7 +341,6 @@
     </div>
 
     <script>
-        // 메이플 무기 계보 (실제 픽셀 아이콘 URL)
         const weapons = [
             { level: 0, name: "초보자의 목검", img: "https://maplestory.io/api/KMS/352/item/1302000/icon" },
             { level: 5, name: "하이랜더", img: "https://maplestory.io/api/KMS/352/item/1402002/icon" },
@@ -386,6 +395,7 @@
         }
 
         function generateQuiz() {
+            document.getElementById('wrongMsg').innerText = ''; // 경고 문구 초기화
             const is3D = Math.random() < 0.5;
             const divisor = Math.floor(Math.random() * 8) + 2;
             const dividend = is3D ? Math.floor(Math.random() * 800) + 100 : Math.floor(Math.random() * 80) + 10;
@@ -453,8 +463,8 @@
             if(selected === currentQuiz.correct) {
                 runStarforceAnim();
             } else {
-                alert(`❌ 오답입니다!\n정답: ${currentQuiz.correct}`);
-                generateQuiz();
+                // 오답일 때: 정답을 공개하지 않고 경고 문구만 표시
+                document.getElementById('wrongMsg').innerText = "❌ 정답이 아닙니다! 다시 한 번 생각해보세요.";
             }
         }
 
@@ -514,17 +524,14 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
-        // 귀여운 배경 캔버스 그리기
         let animOffset = 0;
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             animOffset += 0.05;
 
-            // 배경 파란 하늘
             ctx.fillStyle = '#64b5f6';
             ctx.fillRect(0, 0, canvas.width, 170);
 
-            // 귀여운 구름
             ctx.fillStyle = '#ffffff';
             ctx.beginPath();
             ctx.arc(100, 50, 25, 0, Math.PI*2);
@@ -532,13 +539,11 @@
             ctx.arc(150, 50, 25, 0, Math.PI*2);
             ctx.fill();
 
-            // 녹색 지형
             ctx.fillStyle = '#81c784';
             ctx.fillRect(0, 170, canvas.width, 80);
             ctx.fillStyle = '#4caf50';
             ctx.fillRect(0, 170, canvas.width, 12);
 
-            // 주황버섯 (둥실둥실)
             let mY = 140 + Math.sin(animOffset)*5;
             ctx.fillStyle = '#ff7043';
             ctx.beginPath();
@@ -547,7 +552,6 @@
             ctx.fillStyle = '#fff8e1';
             ctx.fillRect(607, mY, 26, 22);
 
-            // 용사 캐릭터
             ctx.fillStyle = '#ec407a';
             ctx.fillRect(120, 135, 24, 40);
 
