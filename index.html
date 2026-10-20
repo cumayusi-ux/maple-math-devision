@@ -351,7 +351,7 @@
             <div class="hammer">🌟</div>
             <h2 style="color:#d35400; font-size:20px;">모험가 이름을 입력하세요!</h2>
             <div style="font-size:13px; color:#34495e; margin-top:5px;">내 이름이 들어간 무기를 강화해보세요!</div>
-            <input type="text" id="userNameInput" class="name-input" placeholder="예: 이민형" maxlength="8">
+            <input type="text" id="userNameInput" class="name-input" placeholder="예: 김민형" maxlength="8">
             <button class="m-btn" onclick="startAdventure()">모험 시작하기!</button>
         </div>
     </div>
@@ -532,12 +532,12 @@
             modal.style.display = 'flex';
             hammer.className = 'hammer';
             hammer.innerText = '⚠️';
-            title.innerText = '오답 페널티!';
+            title.innerText = '틀렸어요!'; // 한글 수정
             title.style.color = '#c0392b';
 
             if (currentStar > 0) {
                 currentStar--;
-                desc.innerText = `틀렸습니다! ${playerName}의 장비 스타포스가 ★ ${currentStar}성으로 하락했습니다.`;
+                desc.innerText = `아쉬워요! 스타포스가 ★ ${currentStar}성으로 하락했습니다.`;
             } else {
                 desc.innerText = '틀렸습니다! 정답을 다시 신중히 생각해보세요. (0성은 하락하지 않아요)';
             }
@@ -576,15 +576,15 @@
                 if(rand < rates.success) {
                     currentStar++;
                     hammer.innerText = '🌟';
-                    title.innerText = 'SUCCESS!';
+                    title.innerText = '맞았어요!'; // 한글 수정
                     title.style.color = '#27ae60';
-                    desc.innerText = `성공! ★ ${currentStar}성으로 ${playerName}의 장비가 강해졌어요!`;
+                    desc.innerText = `정답! ★ ${currentStar}성으로 ${playerName}의 장비가 강해졌어요!`;
                 } else {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
-                    title.innerText = 'FAIL (단계 하락)';
+                    title.innerText = '틀렸어요! (단계 하락)'; // 한글 수정
                     title.style.color = '#e67e22';
-                    desc.innerText = `아쉬워요! ★ ${currentStar}성으로 내려갔어요. (파괴 없음!)`;
+                    desc.innerText = `아쉬워요! 정답을 맞히지 못해 ★ ${currentStar}성으로 내려갔어요.`;
                 }
 
                 btn.innerText = '문제 더 풀기';
@@ -724,7 +724,6 @@
             requestAnimationFrame(drawScene);
         }
 
-        // 초기 실행 시 이름 모달 대기 (자동 시작 안 함)
         drawScene();
     </script>
 </body>
