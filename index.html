@@ -208,6 +208,13 @@
             box-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
         }
 
+        /* 22성 최종 달성 모드 */
+        .quiz-panel-right.victory-mode {
+            background: linear-gradient(135deg, #fffde7, #fff3e0);
+            border: 4px solid #f1c40f;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.8);
+        }
+
         .chance-banner {
             display: none;
             background: linear-gradient(90deg, #e67e22, #f1c40f);
@@ -313,6 +320,25 @@
             box-shadow: 0 3px 0 #f39c12;
         }
 
+        .restart-btn {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #1e8449;
+            margin-top: 14px;
+            font-weight: bold;
+            transition: transform 0.15s, background 0.15s;
+        }
+
+        .restart-btn:hover {
+            background: linear-gradient(to bottom, #27ae60, #1e8449);
+            transform: scale(1.05);
+        }
+
         .name-input {
             width: 100%;
             padding: 10px;
@@ -361,9 +387,9 @@
                     </div>
                 </div>
 
-                <!-- 우측: 나눗셈 문제 패널 -->
+                <!-- 우측: 나눗셈 문제 패널 (22성 달성 시 축하 화면 변환) -->
                 <div class="quiz-panel-right" id="quizPanel">
-                    <div id="chanceBanner" class="chance-banner">⚡ 더블 타임 찬스! 맞히면 +2성 승급! ⚡</div>
+                    <div id="chanceBanner" class="chance-banner">⚡ [세 자리 수 도전!] 찬스타임! 맞히면 +2성 승급! ⚡</div>
                     <div id="quizWarn" style="font-size: 13px; color: #c0392b; font-weight: bold;">⚠️ 오답 시 단계가 하락할 수 있으니 신중히 푸세요!</div>
                     <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
                     <div class="quiz-opts" id="optsBox"></div>
@@ -378,7 +404,7 @@
             <div class="hammer">🌟</div>
             <h2 style="color:#d35400; font-size:20px;">모험가 이름을 입력하세요!</h2>
             <div style="font-size:13px; color:#34495e; margin-top:5px;">내 이름이 들어간 무기를 강화해보세요!</div>
-            <input type="text" id="userNameInput" class="name-input" placeholder="예: 이민형" maxlength="8">
+            <input type="text" id="userNameInput" class="name-input" placeholder="예: 김민형" maxlength="8">
             <button class="m-btn" onclick="startAdventure()">모험 시작하기!</button>
         </div>
     </div>
@@ -438,7 +464,12 @@
             generateQuiz();
         }
 
-        // 난이도 전면 완화! 성공 확률 대폭 상승!
+        function restartGame() {
+            currentStar = 0;
+            updateUI();
+            generateQuiz();
+        }
+
         function getRates(star) {
             if (star >= MAX_STARS) return { success: 0, drop: 0 };
 
@@ -495,11 +526,16 @@
         }
 
         function generateQuiz() {
-            // 25% 확률로 더블 타임 찬스 발동!
-            isDoubleChance = Math.random() < 0.25;
+            // ⭐ 22성 전설 도달 시 축하 패널 표시 ⭐
+            if (currentStar >= MAX_STARS) {
+                renderVictoryPanel();
+                return;
+            }
 
             const is3D = Math.random() < 0.5;
-            const divisor = Math.floor(Math.random() * 8) + 2;
+            isDoubleChance = is3D; // 세 자리 수 나누기 한 자리 수에만 찬스타임!
+
+            const divisor = Math.floor(Math.random() * 8) + 2; // 2 ~ 9
             const dividend = is3D ? Math.floor(Math.random() * 800) + 100 : Math.floor(Math.random() * 80) + 10;
 
             const q = Math.floor(dividend / divisor);
@@ -527,6 +563,10 @@
         function renderQuiz() {
             const quizPanel = document.getElementById('quizPanel');
             const chanceBanner = document.getElementById('chanceBanner');
+            const quizWarn = document.getElementById('quizWarn');
+
+            quizPanel.classList.remove('victory-mode');
+            quizWarn.style.display = 'block';
 
             if (isDoubleChance) {
                 quizPanel.classList.add('double-mode');
@@ -546,6 +586,27 @@
                 btn.onclick = (e) => checkAnswer(opt, e.target);
                 box.appendChild(btn);
             });
+            updateUI();
+        }
+
+        // 🎉 22성 최종 달성 시 내부 패널 축하 화면
+        function renderVictoryPanel() {
+            const quizPanel = document.getElementById('quizPanel');
+            quizPanel.className = 'quiz-panel-right victory-mode';
+            quizPanel.innerHTML = `
+                <div style="font-size: 45px; margin-bottom: 5px;">👑🎉✨</div>
+                <h2 style="color: #d35400; font-size: 22px; margin-bottom: 6px;">나눗셈 정복완료!</h2>
+                <div style="font-size: 15px; color: #27ae60; font-weight: bold; line-height: 1.4;">
+                    축하합니다! <b>${playerName}</b>님이<br>
+                    최고 등급 <b>★ 22성 제네시스 무기</b>를 완성했습니다!
+                </div>
+                <div style="font-size: 13px; color: #7f8c8d; margin-top: 8px;">
+                    완벽한 나눗셈 마스터가 되셨습니다!
+                </div>
+                <div>
+                    <button class="restart-btn" onclick="restartGame()">🔄 다시 도전하기</button>
+                </div>
+            `;
             updateUI();
         }
 
@@ -603,11 +664,6 @@
         }
 
         function runStarforceAnim() {
-            if (currentStar >= MAX_STARS) {
-                alert(`축하합니다! ${playerName}님의 장비가 이미 최고 등급인 ★ 22성에 도달했습니다!`);
-                return;
-            }
-
             const modal = document.getElementById('sfModal');
             const hammer = document.getElementById('hammerIcon');
             const title = document.getElementById('modalTitle');
@@ -617,9 +673,9 @@
             modal.style.display = 'flex';
             hammer.className = 'hammer swing';
             hammer.innerText = '🔨';
-            title.innerText = isDoubleChance ? '⚡ 더블 찬스 강화!' : '민형쌤의 강화 주문서!';
+            title.innerText = isDoubleChance ? '⚡ [세 자리 수 정복] 더블 강화!' : '민형쌤의 강화 주문서!';
             title.style.color = '#d35400';
-            desc.innerText = isDoubleChance ? '대박 찬스! 2성이 한 번에 올라갈 수 있어요!' : '별의 기운이 퐁퐁 솟아납니다!';
+            desc.innerText = isDoubleChance ? '세 자리 수 난관 정복! 2성이 한 번에 올라갈 수 있어요!' : '별의 기운이 퐁퐁 솟아납니다!';
             btn.style.display = 'none';
 
             setTimeout(() => {
@@ -634,7 +690,7 @@
                     title.innerText = '맞았어요!';
                     title.style.color = '#27ae60';
                     desc.innerText = isDoubleChance 
-                        ? `대박 정답! 더블 찬스로 ★ ${currentStar}성까지 2단계 대폭 상승했어요! 🎉`
+                        ? `대박 정답! 세 자리 수 문제를 해결해 ★ ${currentStar}성까지 2단계 승급했어요! 🎉`
                         : `정답! ★ ${currentStar}성으로 하늘에 커다란 별이 새로 생겼어요!`;
                 } else {
                     currentStar = Math.max(0, currentStar - 1);
