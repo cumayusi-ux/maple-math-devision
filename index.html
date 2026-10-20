@@ -128,9 +128,10 @@
         }
 
         .item-title {
-            font-size: 17px;
+            font-size: 16px;
             color: #8e44ad;
             font-weight: bold;
+            text-align: center;
         }
 
         /* 22개 별 슬롯 (4-4-4-4-4-2 띄어쓰기) */
@@ -254,7 +255,6 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            display: none;
         }
 
         .modal-box {
@@ -286,11 +286,22 @@
             font-weight: bold;
             box-shadow: 0 3px 0 #f39c12;
         }
+
+        .name-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            text-align: center;
+            margin: 10px 0;
+            outline: none;
+        }
     </style>
 </head>
 <body>
 
-    <h1>🍁 민형쌤과 함께하는 나눗셈 정복 (안전 강화!) 🍁</h1>
+    <h1 id="mainTitle">🍁 민형쌤과 함께하는 나눗셈 정복 🍁</h1>
 
     <div class="game-container">
         <!-- 1. 상단 숲속 화면 -->
@@ -301,7 +312,7 @@
         <!-- 2. 스타포스 가로형 배치 -->
         <div class="sf-window">
             <div class="sf-header">
-                <span>⚔️ 스타포스 장비 강화소 (최대 ★22성 / 파괴 없음)</span>
+                <span id="headerTitle">⚔️ 스타포스 장비 강화소 (최대 ★22성)</span>
                 <span id="topStarBadge">★ 0성</span>
             </div>
 
@@ -317,7 +328,7 @@
                     <div class="stars-container" id="starsBox"></div>
                     <div class="stars-count-txt" id="starTxt">★ 0 / 22성</div>
 
-                    <!-- 성공 / 실패(하락) 확률만 깔끔하게 표시 -->
+                    <!-- 성공 / 실패(하락) 확률 -->
                     <div class="rates-box-compact">
                         <span>성공 확률: <b id="sucRate" style="color:#27ae60;">99.75%</b></span>
                         <span>실패(하락): <b id="dropRate" style="color:#e67e22;">0.25%</b></span>
@@ -334,8 +345,19 @@
         </div>
     </div>
 
-    <!-- 모달 -->
-    <div id="sfModal" class="modal-bg">
+    <!-- 최초 접속 이름 입력 모달 -->
+    <div id="nameModal" class="modal-bg">
+        <div class="modal-box">
+            <div class="hammer">🌟</div>
+            <h2 style="color:#d35400; font-size:20px;">모험가 이름을 입력하세요!</h2>
+            <div style="font-size:13px; color:#34495e; margin-top:5px;">내 이름이 들어간 무기를 강화해보세요!</div>
+            <input type="text" id="userNameInput" class="name-input" placeholder="예: 김민형" maxlength="8">
+            <button class="m-btn" onclick="startAdventure()">모험 시작하기!</button>
+        </div>
+    </div>
+
+    <!-- 결과 안내 모달 -->
+    <div id="sfModal" class="modal-bg" style="display:none;">
         <div class="modal-box">
             <div id="hammerIcon" class="hammer">🔨</div>
             <h2 id="modalTitle" style="color:#d35400; font-size:22px;">강화 진행 중...</h2>
@@ -346,8 +368,9 @@
 
     <script>
         const MAX_STARS = 22;
+        let playerName = "용사";
 
-        const weapons = [
+        const baseWeapons = [
             { level: 0, name: "초보자의 목검", img: "https://maplestory.io/api/KMS/352/item/1302000/icon" },
             { level: 3, name: "하이랜더", img: "https://maplestory.io/api/KMS/352/item/1402002/icon" },
             { level: 6, name: "호검", img: "https://maplestory.io/api/KMS/352/item/1402004/icon" },
@@ -365,7 +388,17 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // 성공 확률 및 실패(하락) 확률표 적용
+        function startAdventure() {
+            const inputVal = document.getElementById('userNameInput').value.trim();
+            if (inputVal !== "") {
+                playerName = inputVal;
+            }
+            document.getElementById('nameModal').style.display = 'none';
+            document.getElementById('mainTitle').innerText = `🍁 ${playerName}의 나눗셈 정복 🍁`;
+            updateUI();
+            generateQuiz();
+        }
+
         function getRates(star) {
             if (star >= MAX_STARS) return { success: 0, drop: 0 };
 
@@ -399,7 +432,6 @@
             return { success: data.success, drop: Number((100 - data.success).toFixed(2)) };
         }
 
-        // 22개 별 슬롯 (4-4-4-4-4-2)
         function renderStars() {
             const box = document.getElementById('starsBox');
             box.innerHTML = '';
@@ -471,11 +503,11 @@
             document.getElementById('sucRate').innerText = `${rates.success}%`;
             document.getElementById('dropRate').innerText = `${rates.drop}%`;
 
-            let curWeapon = weapons[0];
-            for(let w of weapons) {
+            let curWeapon = baseWeapons[0];
+            for(let w of baseWeapons) {
                 if(currentStar >= w.level) curWeapon = w;
             }
-            document.getElementById('itemName').innerText = curWeapon.name;
+            document.getElementById('itemName').innerText = `${playerName}의 ${curWeapon.name}`;
             document.getElementById('itemImg').src = curWeapon.img;
         }
 
@@ -505,7 +537,7 @@
 
             if (currentStar > 0) {
                 currentStar--;
-                desc.innerText = `틀렸습니다! 스타포스가 ★ ${currentStar}성으로 하락했습니다.`;
+                desc.innerText = `틀렸습니다! ${playerName}의 장비 스타포스가 ★ ${currentStar}성으로 하락했습니다.`;
             } else {
                 desc.innerText = '틀렸습니다! 정답을 다시 신중히 생각해보세요. (0성은 하락하지 않아요)';
             }
@@ -518,7 +550,7 @@
 
         function runStarforceAnim() {
             if (currentStar >= MAX_STARS) {
-                alert("축하합니다! 이미 최고 등급인 ★ 22성에 도달했습니다!");
+                alert(`축하합니다! ${playerName}님의 장비가 이미 최고 등급인 ★ 22성에 도달했습니다!`);
                 return;
             }
 
@@ -546,7 +578,7 @@
                     hammer.innerText = '🌟';
                     title.innerText = 'SUCCESS!';
                     title.style.color = '#27ae60';
-                    desc.innerText = `성공! ★ ${currentStar}성으로 캐릭터가 꾸며졌어요!`;
+                    desc.innerText = `성공! ★ ${currentStar}성으로 ${playerName}의 장비가 강해졌어요!`;
                 } else {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
@@ -692,7 +724,7 @@
             requestAnimationFrame(drawScene);
         }
 
-        generateQuiz();
+        // 초기 실행 시 이름 모달 대기 (자동 시작 안 함)
         drawScene();
     </script>
 </body>
