@@ -26,35 +26,35 @@
             align-items: center;
             justify-content: flex-start;
             min-height: 100vh;
-            padding: 15px;
+            padding: 10px;
         }
 
         h1 {
             color: #ffeb3b;
-            text-shadow: 3px 3px 0px #e67e22, -2px -2px 0px #000;
-            margin-bottom: 12px;
-            font-size: 28px;
+            text-shadow: 2px 2px 0px #e67e22, -1px -1px 0px #000;
+            margin-bottom: 8px;
+            font-size: 22px;
             letter-spacing: 1px;
             text-align: center;
         }
 
         .game-container {
             width: 100%;
-            max-width: 750px;
+            max-width: 960px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
         }
 
-        /* 메이플 숲속 캔버스 프레임 (나무 배경 + 중앙 캐릭터) */
+        /* 1. 상단 사냥터 (슬림 가로형) */
         .map-frame {
             position: relative;
             width: 100%;
-            height: 260px;
-            border: 5px solid #ffb74d;
-            border-radius: 20px;
+            height: 180px;
+            border: 4px solid #ffb74d;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
             background: #81c784;
         }
 
@@ -63,120 +63,134 @@
             height: 100%;
         }
 
-        /* 스타포스 강화 전용 대형 UI 창 (인벤토리 제거) */
+        /* 2. 하단 UI 영역 (태블릿 가로 나란히 배치) */
         .sf-window {
             background: linear-gradient(to bottom, rgba(40, 25, 75, 0.95), rgba(18, 10, 40, 0.95));
             border: 4px solid #ffb74d;
-            border-radius: 22px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            border-radius: 18px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
         }
 
         .sf-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px dashed #ffb74d;
-            padding-bottom: 10px;
+            border-bottom: 2px dashed #ffb74d;
+            padding-bottom: 6px;
             color: #ffeb3b;
-            font-size: 20px;
+            font-size: 16px;
         }
 
-        /* 큼직해진 중앙 강화 카드 */
-        .sf-card-large {
+        /* ★ 핵심: 좌측(강화창) / 우측(선택지) 나란히 2열 구조 */
+        .sf-landscape-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        @media(max-width: 650px) {
+            .sf-landscape-grid { grid-template-columns: 1fr; }
+        }
+
+        /* 좌측: 강화 카드 */
+        .sf-card-left {
             background: rgba(255, 255, 255, 0.08);
-            border: 3px solid #ab47bc;
-            border-radius: 18px;
-            padding: 18px;
+            border: 2px solid #ab47bc;
+            border-radius: 14px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
         }
 
-        .item-preview-large {
-            width: 100px; height: 100px;
+        .item-preview {
+            width: 75px; height: 75px;
             background: #fff;
-            border: 4px solid #ffeb3b;
-            border-radius: 18px;
+            border: 3px solid #ffeb3b;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 6px 0;
-            box-shadow: 0 0 20px rgba(255, 235, 59, 0.7);
+            margin: 4px 0;
+            box-shadow: 0 0 15px rgba(255, 235, 59, 0.6);
         }
 
-        .item-preview-large img {
-            width: 65px;
-            height: 65px;
+        .item-preview img {
+            width: 50px;
+            height: 50px;
             object-fit: contain;
         }
 
         .item-title {
-            font-size: 22px;
+            font-size: 17px;
             color: #ffeb3b;
-            text-shadow: 1px 1px 3px #000;
+            text-shadow: 1px 1px 2px #000;
         }
 
         .stars-txt {
             color: #f1c40f;
-            font-size: 24px;
-            text-shadow: 0 0 10px #ffeb3b;
+            font-size: 19px;
+            text-shadow: 0 0 8px #ffeb3b;
         }
 
-        .rates-box-wide {
+        .rates-box-compact {
             width: 100%;
-            max-width: 500px;
-            font-size: 15px;
+            font-size: 12px;
             background: rgba(0,0,0,0.35);
-            padding: 10px 20px;
-            border-radius: 12px;
+            padding: 6px 10px;
+            border-radius: 8px;
             display: flex;
             justify-content: space-around;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
-        /* 나눗셈 문제 귀여운 패널 */
-        .quiz-panel {
+        /* 우측: 나눗셈 문제 및 선택지 패널 */
+        .quiz-panel-right {
             background: rgba(0, 0, 0, 0.45);
-            border: 3px solid #26c6da;
-            border-radius: 18px;
-            padding: 18px;
+            border: 2px solid #26c6da;
+            border-radius: 14px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             text-align: center;
         }
 
         .quiz-q {
-            font-size: 30px;
+            font-size: 24px;
             color: #fff;
-            margin: 10px 0;
-            text-shadow: 2px 2px 4px #000;
+            margin: 6px 0;
+            text-shadow: 2px 2px 3px #000;
         }
 
         .quiz-opts {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
         }
 
         .opt-btn {
             background: linear-gradient(to bottom, #42a5f5, #1e88e5);
             color: #fff;
             border: 2px solid #fff;
-            padding: 14px;
-            font-size: 18px;
-            border-radius: 14px;
+            padding: 8px 10px;
+            font-size: 15px;
+            border-radius: 10px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #1565c0;
+            box-shadow: 0 3px 0 #1565c0;
             transition: background 0.15s, transform 0.15s;
         }
 
         .opt-btn:hover {
             background: linear-gradient(to bottom, #ffca28, #ffa726);
             color: #000;
-            box-shadow: 0 4px 0 #e65100;
+            box-shadow: 0 3px 0 #e65100;
         }
 
         /* ❌ 오답 시 붉은색 흔들림 이펙트 애니메이션 */
@@ -185,15 +199,15 @@
             background: linear-gradient(to bottom, #e53935, #c62828) !important;
             border-color: #ff8a80 !important;
             color: #fff !important;
-            box-shadow: 0 4px 0 #b71c1c !important;
+            box-shadow: 0 3px 0 #b71c1c !important;
         }
 
         @keyframes shake {
             0% { transform: translateX(0); }
-            20% { transform: translateX(-12px); }
-            40% { transform: translateX(12px); }
-            60% { transform: translateX(-8px); }
-            80% { transform: translateX(8px); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
             100% { transform: translateX(0); }
         }
 
@@ -212,14 +226,14 @@
         .modal-box {
             background: linear-gradient(to bottom, #3f51b5, #1a237e);
             border: 4px solid #ffeb3b;
-            border-radius: 20px;
-            width: 340px;
-            padding: 25px;
+            border-radius: 18px;
+            width: 320px;
+            padding: 20px;
             text-align: center;
-            box-shadow: 0 0 35px #ffeb3b;
+            box-shadow: 0 0 30px #ffeb3b;
         }
 
-        .hammer { font-size: 55px; display: inline-block; margin-bottom: 10px; }
+        .hammer { font-size: 50px; display: inline-block; margin-bottom: 8px; }
         .swing { animation: hammerAnim 0.3s infinite alternate; }
         @keyframes hammerAnim {
             from { transform: rotate(-25deg); }
@@ -230,12 +244,12 @@
             background: #ffeb3b;
             color: #000;
             border: none;
-            padding: 10px 24px;
-            font-size: 16px;
-            border-radius: 12px;
+            padding: 8px 20px;
+            font-size: 15px;
+            border-radius: 10px;
             cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 4px 0 #f57f17;
+            margin-top: 12px;
+            box-shadow: 0 3px 0 #f57f17;
         }
     </style>
 </head>
@@ -244,37 +258,40 @@
     <h1>🍁 민형쌤과 함께하는 나눗셈 정복 🍁</h1>
 
     <div class="game-container">
-        <!-- 메이플 숲속 화면 (나무 배경 & 중앙 아바타) -->
+        <!-- 1. 상단 메이플 숲속 화면 -->
         <div class="map-frame">
-            <canvas id="gameCanvas" width="750" height="260"></canvas>
+            <canvas id="gameCanvas" width="960" height="180"></canvas>
         </div>
 
-        <!-- 스타포스 대형 UI (인벤토리 삭제, 큼직하게) -->
+        <!-- 2. 스타포스 가로형 배치 (좌: 강화창 / 우: 문제선택지) -->
         <div class="sf-window">
             <div class="sf-header">
                 <span>⚔️ 스타포스 장비 강화소</span>
                 <span id="topStarBadge">★ 0성</span>
             </div>
 
-            <div class="sf-card-large">
-                <div class="item-title" id="itemName">초보자의 목검</div>
-                <div class="item-preview-large">
-                    <img id="itemImg" src="https://maplestory.io/api/KMS/352/item/1302000/icon" alt="무기">
-                </div>
-                <div class="stars-txt" id="starTxt">★ 0 / 50성</div>
+            <div class="sf-landscape-grid">
+                <!-- 좌측: 강화 카드 -->
+                <div class="sf-card-left">
+                    <div class="item-title" id="itemName">초보자의 목검</div>
+                    <div class="item-preview">
+                        <img id="itemImg" src="https://maplestory.io/api/KMS/352/item/1302000/icon" alt="무기">
+                    </div>
+                    <div class="stars-txt" id="starTxt">★ 0 / 50성</div>
 
-                <div class="rates-box-wide">
-                    <span>성공 확률: <b id="sucRate" style="color:#2ecc71;">95%</b></span>
-                    <span>하락 확률: <b id="dropRate" style="color:#ff9800;">0%</b></span>
-                    <span>파괴 확률: <b id="desRate" style="color:#e74c3c;">0%</b></span>
+                    <div class="rates-box-compact">
+                        <span>성공: <b id="sucRate" style="color:#2ecc71;">95%</b></span>
+                        <span>하락: <b id="dropRate" style="color:#ff9800;">0%</b></span>
+                        <span>파괴: <b id="desRate" style="color:#e74c3c;">0%</b></span>
+                    </div>
                 </div>
-            </div>
 
-            <!-- 나눗셈 문제 풀이 패널 -->
-            <div class="quiz-panel">
-                <div style="font-size: 15px; color: #b2ebf2;">정답을 맞히면 민형쌤의 주문서 강화가 시작됩니다!</div>
-                <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
-                <div class="quiz-opts" id="optsBox"></div>
+                <!-- 우측: 나눗셈 문제 패널 -->
+                <div class="quiz-panel-right">
+                    <div style="font-size: 13px; color: #b2ebf2;">정답을 맞히면 강화 주문서 발동!</div>
+                    <div class="quiz-q" id="quizQ">85 ÷ 4 = ?</div>
+                    <div class="quiz-opts" id="optsBox"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -283,8 +300,8 @@
     <div id="sfModal" class="modal-bg">
         <div class="modal-box">
             <div id="hammerIcon" class="hammer">🔨</div>
-            <h2 id="modalTitle" style="color:#ffeb3b; font-size:24px;">강화 진행 중...</h2>
-            <div id="modalDesc" style="font-size:15px; margin-top:8px; color:#e0e0e0;">주문서의 기운이 모입니다!</div>
+            <h2 id="modalTitle" style="color:#ffeb3b; font-size:22px;">강화 진행 중...</h2>
+            <div id="modalDesc" style="font-size:14px; margin-top:6px; color:#e0e0e0;">주문서의 기운이 모입니다!</div>
             <button id="modalBtn" class="m-btn" onclick="closeModal()" style="display:none;">확인</button>
         </div>
     </div>
@@ -383,7 +400,6 @@
             document.getElementById('itemImg').src = curWeapon.img;
         }
 
-        // ❌ 오답 판정: 팝업 금지, 정답 안내 금지, 버튼 붉은색 흔들림 이펙트 적용
         function checkAnswer(selected, btnEl) {
             if(isDestroyed) {
                 alert("무기가 파괴되었습니다! 모달 창에서 초기화 후 다시 도전하세요.");
@@ -392,9 +408,8 @@
             if(selected === currentQuiz.correct) {
                 runStarforceAnim();
             } else {
-                // 오답 처리: 버튼 흔들림 클래스 추가
                 btnEl.classList.remove('wrong-shake');
-                void btnEl.offsetWidth; // 리플로우 강제
+                void btnEl.offsetWidth;
                 btnEl.classList.add('wrong-shake');
             }
         }
@@ -463,88 +478,75 @@
 
             // 1. 파란 하늘 배경
             ctx.fillStyle = '#64b5f6';
-            ctx.fillRect(0, 0, canvas.width, 170);
+            ctx.fillRect(0, 0, canvas.width, 120);
 
-            // 2. 울창한 메이플 나무 배경 (좌/우)
-            // 나무 1 (좌측)
+            // 2. 나무 배경
             ctx.fillStyle = '#5d4037';
-            ctx.fillRect(60, 80, 24, 100);
+            ctx.fillRect(80, 50, 20, 80);
             ctx.fillStyle = '#2e7d32';
-            ctx.beginPath();
-            ctx.arc(72, 70, 45, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(90, 45, 38, 0, Math.PI * 2); ctx.fill();
 
-            // 나무 2 (우측)
             ctx.fillStyle = '#5d4037';
-            ctx.fillRect(660, 70, 28, 110);
+            ctx.fillRect(canvas.width - 100, 40, 22, 90);
             ctx.fillStyle = '#388e3c';
-            ctx.beginPath();
-            ctx.arc(674, 55, 50, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(canvas.width - 89, 32, 42, 0, Math.PI * 2); ctx.fill();
 
             // 구름
             ctx.fillStyle = '#ffffff';
             ctx.beginPath();
-            ctx.arc(200, 45, 20, 0, Math.PI*2);
-            ctx.arc(220, 40, 25, 0, Math.PI*2);
-            ctx.arc(240, 45, 20, 0, Math.PI*2);
+            ctx.arc(220, 35, 16, 0, Math.PI*2);
+            ctx.arc(238, 30, 20, 0, Math.PI*2);
+            ctx.arc(256, 35, 16, 0, Math.PI*2);
             ctx.fill();
 
-            // 3. 지형 (바닥 녹색 풀밭)
+            // 3. 지형 (바닥 풀밭)
             ctx.fillStyle = '#81c784';
-            ctx.fillRect(0, 170, canvas.width, 90);
+            ctx.fillRect(0, 120, canvas.width, 60);
             ctx.fillStyle = '#4caf50';
-            ctx.fillRect(0, 170, canvas.width, 14);
+            ctx.fillRect(0, 120, canvas.width, 10);
 
-            // 4. 중앙 정면 아바타 (스타포스 단계별 화려함 진화)
-            const cx = canvas.width / 2 - 15;
-            const cy = 125 + Math.sin(animOffset) * 3;
+            // 4. 중앙 정면 아바타
+            const cx = canvas.width / 2 - 13;
+            const cy = 82 + Math.sin(animOffset) * 2.5;
 
-            // ★ 30성 이상: 화려한 신성한 오라 (보내주신 이미지 스타일)
             if (currentStar >= 30) {
                 ctx.save();
-                ctx.shadowBlur = 20 + Math.sin(animOffset)*5;
+                ctx.shadowBlur = 18 + Math.sin(animOffset)*4;
                 ctx.shadowColor = "#ffeb3b";
                 ctx.fillStyle = "rgba(255, 235, 59, 0.35)";
                 ctx.beginPath();
-                ctx.arc(cx + 15, cy + 20, 50, 0, Math.PI * 2);
+                ctx.arc(cx + 13, cy + 18, 42, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             }
 
-            // 아바타 몸통 (강화 레벨에 따라 갑옷 상의 색상 변환)
-            let armorColor = '#8d6e63'; // 초보자
-            if (currentStar >= 10) armorColor = '#42a5f5'; // 중급 전사
-            if (currentStar >= 25) armorColor = '#ab47bc'; // 고급 루타비스
-            if (currentStar >= 40) armorColor = '#ffee58'; // 전설 제네시스 아머
+            let armorColor = '#8d6e63';
+            if (currentStar >= 10) armorColor = '#42a5f5';
+            if (currentStar >= 25) armorColor = '#ab47bc';
+            if (currentStar >= 40) armorColor = '#ffee58';
 
             ctx.fillStyle = armorColor;
-            ctx.fillRect(cx, cy + 20, 30, 30);
+            ctx.fillRect(cx, cy + 18, 26, 26);
 
-            // 얼굴/피부
             ctx.fillStyle = '#ffe0bd';
-            ctx.fillRect(cx + 3, cy, 24, 22);
+            ctx.fillRect(cx + 3, cy, 20, 19);
 
-            // 눈
             ctx.fillStyle = '#000';
-            ctx.fillRect(cx + 8, cy + 8, 3, 5);
-            ctx.fillRect(cx + 19, cy + 8, 3, 5);
+            ctx.fillRect(cx + 7, cy + 7, 3, 4);
+            ctx.fillRect(cx + 16, cy + 7, 3, 4);
 
-            // 머리카락 / 투구 (고성급일 때 전설 왕관/모자 적용)
             if (currentStar >= 35) {
-                // 전설의 화려한 투구 (보내주신 사진 꼬깔/모자 스타일)
                 ctx.fillStyle = '#fff8e1';
                 ctx.beginPath();
-                ctx.moveTo(cx - 5, cy + 2);
-                ctx.lineTo(cx + 15, cy - 25);
-                ctx.lineTo(cx + 35, cy + 2);
+                ctx.moveTo(cx - 4, cy + 2);
+                ctx.lineTo(cx + 13, cy - 20);
+                ctx.lineTo(cx + 30, cy + 2);
                 ctx.fill();
                 ctx.fillStyle = '#ffb300';
-                ctx.fillRect(cx + 11, cy - 10, 8, 8);
+                ctx.fillRect(cx + 9, cy - 8, 8, 8);
             } else {
-                // 일반 초보자 헤어
                 ctx.fillStyle = '#e74c3c';
-                ctx.fillRect(cx, cy - 5, 30, 10);
+                ctx.fillRect(cx, cy - 4, 26, 9);
             }
 
             requestAnimationFrame(drawScene);
