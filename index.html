@@ -280,6 +280,77 @@
             100% { transform: translateX(0); }
         }
 
+        /* 3. 🏆 22성 전설 보관함 인벤토리 */
+        .inventory-box {
+            background: #ffffff;
+            border: 3px solid #8e44ad;
+            border-radius: 14px;
+            padding: 8px 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .inv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #8e44ad;
+            border-bottom: 1px dashed #dcdde1;
+            padding-bottom: 4px;
+        }
+
+        .inv-list {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px 2px;
+            min-height: 52px;
+            align-items: center;
+        }
+
+        .inv-item {
+            width: 44px;
+            height: 44px;
+            background: #fffde7;
+            border: 2px solid #f1c40f;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 6px rgba(241, 196, 15, 0.5);
+            flex-shrink: 0;
+        }
+
+        .inv-item img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .inv-item .badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: #d35400;
+            color: #fff;
+            font-size: 9px;
+            padding: 1px 3px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .inv-empty-txt {
+            font-size: 13px;
+            color: #bdc3c7;
+            text-align: center;
+            width: 100%;
+        }
+
         .modal-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -324,12 +395,12 @@
             background: linear-gradient(to bottom, #2ecc71, #27ae60);
             color: #fff;
             border: 2px solid #fff;
-            padding: 12px 24px;
-            font-size: 18px;
+            padding: 10px 22px;
+            font-size: 17px;
             border-radius: 12px;
             cursor: pointer;
             box-shadow: 0 4px 0 #1e8449;
-            margin-top: 14px;
+            margin-top: 12px;
             font-weight: bold;
             transition: transform 0.15s, background 0.15s;
         }
@@ -396,6 +467,17 @@
                     <div class="quiz-opts" id="optsBox"></div>
                 </div>
             </div>
+
+            <!-- 3. 🏆 22성 전설 보관함 (인벤토리) -->
+            <div class="inventory-box">
+                <div class="inv-header">
+                    <span>🏆 22성 전설 보관함</span>
+                    <span>획득한 전설 무기: <b id="legendCount" style="color:#d35400;">0</b>개</span>
+                </div>
+                <div class="inv-list" id="invList">
+                    <div class="inv-empty-txt">아직 완성된 22성 전설 무기가 없습니다. 나눗셈을 풀어 도전해보세요!</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -405,7 +487,7 @@
             <div class="hammer">🌟</div>
             <h2 style="color:#d35400; font-size:20px;">모험가 이름을 입력하세요!</h2>
             <div style="font-size:13px; color:#34495e; margin-top:5px;">내 이름이 들어간 무기를 강화해보세요!</div>
-            <input type="text" id="userNameInput" class="name-input" placeholder="예: 이민형" maxlength="8">
+            <input type="text" id="userNameInput" class="name-input" placeholder="예: 김민형" maxlength="8">
             <button class="m-btn" onclick="startAdventure()">모험 시작하기!</button>
         </div>
     </div>
@@ -430,7 +512,7 @@
             { level: 6, name: "호검", img: "https://maplestory.io/api/KMS/352/item/1402004/icon" },
             { level: 9, name: "그륜힐", img: "https://maplestory.io/api/KMS/352/item/1402008/icon" },
             { level: 12, name: "드래곤 클레이모어", img: "https://maplestory.io/api/KMS/352/item/1402018/icon" },
-            { level: 15, name: "우트가르드 소드", img: "https://maplestory.io/api/KMS/352/item/1402220/icon" },
+            { level: 15, name: "우트가르드 소드", img: "https://maplestory.io/api/KMS/352/item/1402200/icon" },
             { level: 18, name: "파프니르 페니텐시아", img: "https://maplestory.io/api/KMS/352/item/1402196/icon" },
             { level: 20, name: "아케인셰이드 두손검", img: "https://maplestory.io/api/KMS/352/item/1402255/icon" },
             { level: 22, name: "제네시스 투핸드소드", img: "https://maplestory.io/api/KMS/352/item/1402259/icon" }
@@ -439,6 +521,7 @@
         let currentStar = 0;
         let currentQuiz = {};
         let isDoubleChance = false;
+        let legendInventory = []; // 22성 완성 무기 인벤토리 목록
 
         // 22개의 별 위치 좌표 (2줄 x 11개씩)
         const bigStarsGrid = [];
@@ -465,13 +548,56 @@
             generateQuiz();
         }
 
+        // ⭐ 22성 다 만들고 새로 도전할 때 호출되는 리셋 함수 ⭐
         function restartGame() {
+            // 22성 무기 보관함에 추가
+            legendInventory.push({
+                title: `${playerName}의 제네시스 투핸드소드`,
+                img: "https://maplestory.io/api/KMS/352/item/1402259/icon"
+            });
+            renderInventory();
+
+            // 별 단계 0으로 리셋
             currentStar = 0;
+
+            // UI 및 문제 복구 및 새로운 문제 생성
+            const quizPanel = document.getElementById('quizPanel');
+            quizPanel.className = 'quiz-panel-right';
+            quizPanel.innerHTML = `
+                <div id="chanceBanner" class="chance-banner">⚡ [세 자리 수 도전!] 찬스타임! 맞히면 +2성 승급! ⚡</div>
+                <div id="quizWarn" style="font-size: 13px; color: #c0392b; font-weight: bold;">⚠️ 오답 시 단계가 하락할 수 있으니 신중히 푸세요!</div>
+                <div class="quiz-q" id="quizQ"></div>
+                <div class="quiz-opts" id="optsBox"></div>
+            `;
+
             updateUI();
             generateQuiz();
         }
 
-        // ⭐ 16성 이상에만 부담 없는 낮은 파괴 확률(0.5% ~ 2.0%) 추가 ⭐
+        function renderInventory() {
+            const invList = document.getElementById('invList');
+            const legendCount = document.getElementById('legendCount');
+            legendCount.innerText = legendInventory.length;
+
+            if (legendInventory.length === 0) {
+                invList.innerHTML = `<div class="inv-empty-txt">아직 완성된 22성 전설 무기가 없습니다. 나눗셈을 풀어 도전해보세요!</div>`;
+                return;
+            }
+
+            invList.innerHTML = '';
+            legendInventory.forEach((item, idx) => {
+                let div = document.createElement('div');
+                div.className = 'inv-item';
+                div.title = `${item.title} #${idx + 1}`;
+                div.innerHTML = `
+                    <img src="${item.img}" alt="22성 전설">
+                    <span class="badge">★22</span>
+                `;
+                invList.appendChild(div);
+            });
+        }
+
+        // ⭐ 파괴 확률 조정 (16성 5% ~ 22성 20%) ⭐
         function getRates(star) {
             if (star >= MAX_STARS) return { success: 0, drop: 0, destroy: 0 };
 
@@ -492,17 +618,17 @@
                 13: { success: 65.0, drop: 35.0, destroy: 0.0 },
                 14: { success: 65.0, drop: 35.0, destroy: 0.0 },
                 15: { success: 65.0, drop: 35.0, destroy: 0.0 },
-                // 16성부터 낮은 파괴 확률 적용!
-                16: { success: 60.0, drop: 39.5, destroy: 0.5 },
-                17: { success: 60.0, drop: 39.3, destroy: 0.7 },
-                18: { success: 60.0, drop: 39.0, destroy: 1.0 },
-                19: { success: 55.0, drop: 43.8, destroy: 1.2 },
-                20: { success: 60.0, drop: 38.5, destroy: 1.5 },
-                21: { success: 50.0, drop: 48.0, destroy: 2.0 },
-                22: { success: 50.0, drop: 48.0, destroy: 2.0 }
+                // 16성 이상 파괴 확률 상향! (최대 20%)
+                16: { success: 60.0, drop: 35.0, destroy: 5.0 },
+                17: { success: 58.0, drop: 35.0, destroy: 7.0 },
+                18: { success: 55.0, drop: 35.0, destroy: 10.0 },
+                19: { success: 53.0, drop: 35.0, destroy: 12.0 },
+                20: { success: 50.0, drop: 35.0, destroy: 15.0 },
+                21: { success: 47.0, drop: 35.0, destroy: 18.0 },
+                22: { success: 45.0, drop: 35.0, destroy: 20.0 }
             };
 
-            let data = rateTable[star] || { success: 60, drop: 39, destroy: 1 };
+            let data = rateTable[star] || { success: 50, drop: 35, destroy: 15 };
             return data;
         }
 
@@ -567,15 +693,17 @@
             const chanceBanner = document.getElementById('chanceBanner');
             const quizWarn = document.getElementById('quizWarn');
 
+            if (!quizWarn) return; // 22성 완료 상태 제외
+
             quizPanel.classList.remove('victory-mode');
             quizWarn.style.display = 'block';
 
             if (isDoubleChance) {
                 quizPanel.classList.add('double-mode');
-                chanceBanner.style.display = 'block';
+                if (chanceBanner) chanceBanner.style.display = 'block';
             } else {
                 quizPanel.classList.remove('double-mode');
-                chanceBanner.style.display = 'none';
+                if (chanceBanner) chanceBanner.style.display = 'none';
             }
 
             document.getElementById('quizQ').innerText = currentQuiz.question;
@@ -595,17 +723,17 @@
             const quizPanel = document.getElementById('quizPanel');
             quizPanel.className = 'quiz-panel-right victory-mode';
             quizPanel.innerHTML = `
-                <div style="font-size: 45px; margin-bottom: 5px;">👑🎉✨</div>
-                <h2 style="color: #d35400; font-size: 22px; margin-bottom: 6px;">나눗셈 정복완료!</h2>
-                <div style="font-size: 15px; color: #27ae60; font-weight: bold; line-height: 1.4;">
+                <div style="font-size: 40px; margin-bottom: 2px;">👑🎉✨</div>
+                <h2 style="color: #d35400; font-size: 20px; margin-bottom: 4px;">나눗셈 정복완료!</h2>
+                <div style="font-size: 14px; color: #27ae60; font-weight: bold; line-height: 1.3;">
                     축하합니다! <b>${playerName}</b>님이<br>
                     최고 등급 <b>★ 22성 제네시스 무기</b>를 완성했습니다!
                 </div>
-                <div style="font-size: 13px; color: #7f8c8d; margin-top: 8px;">
-                    완벽한 나눗셈 마스터가 되셨습니다!
+                <div style="font-size: 12px; color: #7f8c8d; margin-top: 6px;">
+                    보관함에 보관하고 또 도전해보세요!
                 </div>
                 <div>
-                    <button class="restart-btn" onclick="restartGame()">🔄 다시 도전하기</button>
+                    <button class="restart-btn" onclick="restartGame()">🔄 보관하고 다시 도전하기</button>
                 </div>
             `;
             updateUI();
@@ -696,7 +824,7 @@
                         ? `대박 정답! 세 자리 수 문제를 해결해 ★ ${currentStar}성까지 2단계 승급했어요! 🎉`
                         : `정답! ★ ${currentStar}성으로 하늘에 커다란 별이 새로 생겼어요!`;
                 } else if (rand < rates.success + rates.destroy) {
-                    // 💥 파괴 발생 (16성 이상에서만 매우 낮게 작동)
+                    // 💥 파괴 발생
                     currentStar = 0;
                     hammer.innerText = '💥';
                     title.innerText = '장비 파괴!';
@@ -760,21 +888,18 @@
             ctx.fillStyle = nightGrad;
             ctx.fillRect(0, 0, canvas.width, 130);
 
-            // 2. 🌟 5각 황금 왕별 (왼쪽부터 똭똭 생성!)
+            // 2. 🌟 5각 황금 왕별
             for (let i = 0; i < currentStar; i++) {
                 let pos = bigStarsGrid[i];
                 let pulse = Math.sin(animOffset * 3 + i) * 1.5;
 
                 ctx.save();
-                
-                // 외곽 은은한 후광
                 ctx.shadowColor = "#f39c12";
                 ctx.shadowBlur = 12;
                 ctx.fillStyle = "#fff59d";
                 drawVectorStar(pos.x, pos.y, 5, 15 + pulse, 7 + pulse/2);
                 ctx.fill();
 
-                // 중앙 선명한 황금 왕별
                 ctx.shadowBlur = 0;
                 ctx.fillStyle = "#f1c40f";
                 ctx.strokeStyle = "#e67e22";
