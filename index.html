@@ -442,7 +442,7 @@
             <div class="sf-landscape-grid">
                 <!-- 좌측: 강화 카드 -->
                 <div class="sf-card-left">
-                    <div class="item-title" id="itemName">초보자의 목검</div>
+                    <div class="item-title" id="itemName">초보자의 무기</div>
                     <div class="item-preview">
                         <img id="itemImg" src="https://maplestory.io/api/KMS/352/item/1302000/icon" alt="무기">
                     </div>
@@ -506,18 +506,67 @@
         const MAX_STARS = 22;
         let playerName = "용사";
 
-        const baseWeapons = [
-            { level: 0, name: "초보자의 목검", img: "https://maplestory.io/api/KMS/352/item/1302000/icon" },
-            { level: 3, name: "하이랜더", img: "https://maplestory.io/api/KMS/352/item/1402002/icon" },
-            { level: 6, name: "호검", img: "https://maplestory.io/api/KMS/352/item/1402004/icon" },
-            { level: 9, name: "그륜힐", img: "https://maplestory.io/api/KMS/352/item/1402008/icon" },
-            { level: 12, name: "드래곤 클레이모어", img: "https://maplestory.io/api/KMS/352/item/1402018/icon" },
-            { level: 15, name: "우트가르드 소드", img: "https://maplestory.io/api/KMS/352/item/1402200/icon" },
-            { level: 18, name: "파프니르 페니텐시아", img: "https://maplestory.io/api/KMS/352/item/1402196/icon" },
-            { level: 20, name: "아케인셰이드 두손검", img: "https://maplestory.io/api/KMS/352/item/1402255/icon" },
-            { level: 22, name: "제네시스 투핸드소드", img: "https://maplestory.io/api/KMS/352/item/1402259/icon" }
+        // ⭐ 여러 가지 무기 종류 풀(Pool) 정의 (두손검, 완드/스태프, 활, 단검, 폴암 등) ⭐
+        const weaponPools = [
+            {
+                type: "두손검",
+                tiers: [
+                    { level: 0, name: "초보자의 목검", img: "https://maplestory.io/api/KMS/352/item/1302000/icon" },
+                    { level: 3, name: "하이랜더", img: "https://maplestory.io/api/KMS/352/item/1402002/icon" },
+                    { level: 6, name: "호검", img: "https://maplestory.io/api/KMS/352/item/1402004/icon" },
+                    { level: 9, name: "그륜힐", img: "https://maplestory.io/api/KMS/352/item/1402008/icon" },
+                    { level: 12, name: "드래곤 클레이모어", img: "https://maplestory.io/api/KMS/352/item/1402018/icon" },
+                    { level: 15, name: "우트가르드 소드", img: "https://maplestory.io/api/KMS/352/item/1402200/icon" },
+                    { level: 18, name: "파프니르 페니텐시아", img: "https://maplestory.io/api/KMS/352/item/1402196/icon" },
+                    { level: 20, name: "아케인셰이드 두손검", img: "https://maplestory.io/api/KMS/352/item/1402255/icon" },
+                    { level: 22, name: "제네시스 투핸드소드", img: "https://maplestory.io/api/KMS/352/item/1402259/icon" }
+                ]
+            },
+            {
+                type: "완드/스태프",
+                tiers: [
+                    { level: 0, name: "초보자의 완드", img: "https://maplestory.io/api/KMS/352/item/1372000/icon" },
+                    { level: 3, name: "서클로드", img: "https://maplestory.io/api/KMS/352/item/1372002/icon" },
+                    { level: 6, name: "엠스틱", img: "https://maplestory.io/api/KMS/352/item/1372005/icon" },
+                    { level: 9, name: "레이븐완드", img: "https://maplestory.io/api/KMS/352/item/1372030/icon" },
+                    { level: 12, name: "드래곤 완드", img: "https://maplestory.io/api/KMS/352/item/1372015/icon" },
+                    { level: 15, name: "우트가르드 완드", img: "https://maplestory.io/api/KMS/352/item/1372213/icon" },
+                    { level: 18, name: "파프니르 마나리첼", img: "https://maplestory.io/api/KMS/352/item/1372183/icon" },
+                    { level: 20, name: "아케인셰이드 완드", img: "https://maplestory.io/api/KMS/352/item/1372239/icon" },
+                    { level: 22, name: "제네시스 완드", img: "https://maplestory.io/api/KMS/352/item/1372243/icon" }
+                ]
+            },
+            {
+                type: "활",
+                tiers: [
+                    { level: 0, name: "초보자의 활", img: "https://maplestory.io/api/KMS/352/item/1452000/icon" },
+                    { level: 3, name: "자이벤", img: "https://maplestory.io/api/KMS/352/item/1452002/icon" },
+                    { level: 6, name: "아쳐론", img: "https://maplestory.io/api/KMS/352/item/1452005/icon" },
+                    { level: 9, name: "금강표창(활)", img: "https://maplestory.io/api/KMS/352/item/1452009/icon" },
+                    { level: 12, name: "드래곤 윈드윙", img: "https://maplestory.io/api/KMS/352/item/1452016/icon" },
+                    { level: 15, name: "우트가르드 숏보우", img: "https://maplestory.io/api/KMS/352/item/1452213/icon" },
+                    { level: 18, name: "파프니르 윈드체이서", img: "https://maplestory.io/api/KMS/352/item/1452184/icon" },
+                    { level: 20, name: "아케인셰이드 보우", img: "https://maplestory.io/api/KMS/352/item/1452239/icon" },
+                    { level: 22, name: "제네시스 보우", img: "https://maplestory.io/api/KMS/352/item/1452243/icon" }
+                ]
+            },
+            {
+                type: "단검",
+                tiers: [
+                    { level: 0, name: "초보자의 단검", img: "https://maplestory.io/api/KMS/352/item/1332000/icon" },
+                    { level: 3, name: "가드서", img: "https://maplestory.io/api/KMS/352/item/1332002/icon" },
+                    { level: 6, name: "제스코", img: "https://maplestory.io/api/KMS/352/item/1332007/icon" },
+                    { level: 9, name: "사브르", img: "https://maplestory.io/api/KMS/352/item/1332010/icon" },
+                    { level: 12, name: "드래곤 K", img: "https://maplestory.io/api/KMS/352/item/1332023/icon" },
+                    { level: 15, name: "우트가르드 크리스", img: "https://maplestory.io/api/KMS/352/item/1332223/icon" },
+                    { level: 18, name: "파프니르 리스크레서", img: "https://maplestory.io/api/KMS/352/item/1332193/icon" },
+                    { level: 20, name: "아케인셰이드 세이버", img: "https://maplestory.io/api/KMS/352/item/1332252/icon" },
+                    { level: 22, name: "제네시스 엠블렘단검", img: "https://maplestory.io/api/KMS/352/item/1332256/icon" }
+                ]
+            }
         ];
 
+        let currentWeaponPool = weaponPools[0]; // 현재 플레이 중인 무기 종류
         let currentStar = 0;
         let currentQuiz = {};
         let isDoubleChance = false;
@@ -543,18 +592,30 @@
             }
             document.getElementById('nameModal').style.display = 'none';
             document.getElementById('mainTitle').innerText = `🍁 ${playerName}의 나눗셈 정복 🍁`;
+            
+            // 처음 시작할 때 랜덤 무기 종류 배정!
+            pickRandomWeaponPool();
             updateUI();
             generateQuiz();
         }
 
+        function pickRandomWeaponPool() {
+            const randIdx = Math.floor(Math.random() * weaponPools.length);
+            currentWeaponPool = weaponPools[randIdx];
+        }
+
         function restartGame() {
+            // 현재 완성한 22성 무기를 인벤토리에 추가
+            let curWeapon = currentWeaponPool.tiers[currentWeaponPool.tiers.length - 1];
             legendInventory.push({
-                title: `${playerName}의 제네시스 투핸드소드`,
-                img: "https://maplestory.io/api/KMS/352/item/1402259/icon"
+                title: `${playerName}의 ${curWeapon.name}`,
+                img: curWeapon.img
             });
             renderInventory();
 
+            // 별 단계 리셋 및 새로운 랜덤 무기 종류 배정!
             currentStar = 0;
+            pickRandomWeaponPool();
 
             const quizPanel = document.getElementById('quizPanel');
             quizPanel.className = 'quiz-panel-right';
@@ -592,7 +653,6 @@
             });
         }
 
-        // ⭐ 파괴 확률 조정 (16성 2.0% ~ 22성 10.0%) ⭐
         function getRates(star) {
             if (star >= MAX_STARS) return { success: 0, drop: 0, destroy: 0 };
 
@@ -613,7 +673,6 @@
                 13: { success: 65.0, drop: 35.0, destroy: 0.0 },
                 14: { success: 65.0, drop: 35.0, destroy: 0.0 },
                 15: { success: 65.0, drop: 35.0, destroy: 0.0 },
-                // 16성 이상 파괴 확률 (최대 10% 제한)
                 16: { success: 60.0, drop: 38.0, destroy: 2.0 },
                 17: { success: 58.0, drop: 39.0, destroy: 3.0 },
                 18: { success: 56.0, drop: 40.0, destroy: 4.0 },
@@ -649,7 +708,6 @@
             });
         }
 
-        // ⭐ 나눗셈 문제 및 오답 검증 로직 완벽 수정 ⭐
         function generateQuiz() {
             if (currentStar >= MAX_STARS) {
                 renderVictoryPanel();
@@ -659,7 +717,7 @@
             const is3D = Math.random() < 0.5;
             isDoubleChance = is3D;
 
-            const divisor = Math.floor(Math.random() * 8) + 2; // 2 ~ 9
+            const divisor = Math.floor(Math.random() * 8) + 2; 
             const dividend = is3D ? Math.floor(Math.random() * 800) + 100 : Math.floor(Math.random() * 80) + 10;
 
             const q = Math.floor(dividend / divisor);
@@ -669,15 +727,13 @@
             let opts = new Set();
             opts.add(correctStr);
 
-            // 오답 4개 생성 시 무조건 검증
             while(opts.size < 5) {
-                let fq = q + (Math.floor(Math.random() * 7) - 3); // 몫 오차 (-3 ~ +3)
-                let fr = Math.floor(Math.random() * divisor);      // 나머지는 반드시 0 ~ divisor-1 사이
+                let fq = q + (Math.floor(Math.random() * 7) - 3); 
+                let fr = Math.floor(Math.random() * divisor);      
 
                 if (fq < 0) fq = 0;
 
                 let candidateStr = `몫: ${fq}, 나머지: ${fr}`;
-                // 정답과 완전히 일치하는 오답이 들어가지 않도록 철저히 차단
                 if (candidateStr !== correctStr) {
                     opts.add(candidateStr);
                 }
@@ -730,13 +786,13 @@
                 <h2 style="color: #d35400; font-size: 20px; margin-bottom: 4px;">나눗셈 정복완료!</h2>
                 <div style="font-size: 14px; color: #27ae60; font-weight: bold; line-height: 1.3;">
                     축하합니다! <b>${playerName}</b>님이<br>
-                    최고 등급 <b>★ 22성 제네시스 무기</b>를 완성했습니다!
+                    랜덤 당첨된 <b>★ 22성 ${currentWeaponPool.type} 무기</b>를 완성했습니다!
                 </div>
                 <div style="font-size: 12px; color: #7f8c8d; margin-top: 6px;">
-                    보관함에 보관하고 또 도전해보세요!
+                    보관함에 저장되고 새로운 무기가 랜덤으로 주어집니다!
                 </div>
                 <div>
-                    <button class="restart-btn" onclick="restartGame()">🔄 보관하고 다시 도전하기</button>
+                    <button class="restart-btn" onclick="restartGame()">🔄 다음 무기 도전하기</button>
                 </div>
             `;
             updateUI();
@@ -751,11 +807,11 @@
             document.getElementById('dropRate').innerText = `${rates.drop.toFixed(1)}%`;
             document.getElementById('destRate').innerText = `${rates.destroy.toFixed(1)}%`;
 
-            let curWeapon = baseWeapons[0];
-            for(let w of baseWeapons) {
+            let curWeapon = currentWeaponPool.tiers[0];
+            for(let w of currentWeaponPool.tiers) {
                 if(currentStar >= w.level) curWeapon = w;
             }
-            document.getElementById('itemName').innerText = `${playerName}의 ${curWeapon.name}`;
+            document.getElementById('itemName').innerText = `${playerName}의 ${curWeapon.name} (${currentWeaponPool.type})`;
             document.getElementById('itemImg').src = curWeapon.img;
         }
 
@@ -830,7 +886,7 @@
                     hammer.innerText = '💥';
                     title.innerText = '장비 파괴!';
                     title.style.color = '#7f8c8d';
-                    desc.innerText = `아쿠! 강력한 기운을 견디지 못하고 장비가 파괴되어 ★ 0성(초보자의 목검)으로 재시작합니다!`;
+                    desc.innerText = `아쿠! 강력한 기운을 견디지 못하고 장비가 파괴되어 ★ 0성으로 재시작합니다!`;
                 } else {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
