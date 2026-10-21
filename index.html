@@ -487,7 +487,7 @@
             <div class="hammer">🌟</div>
             <h2 style="color:#d35400; font-size:20px;">모험가 이름을 입력하세요!</h2>
             <div style="font-size:13px; color:#34495e; margin-top:5px;">내 이름이 들어간 무기를 강화해보세요!</div>
-            <input type="text" id="userNameInput" class="name-input" placeholder="예: 이민형" maxlength="8">
+            <input type="text" id="userNameInput" class="name-input" placeholder="예: 김민형" maxlength="8">
             <button class="m-btn" onclick="startAdventure()">모험 시작하기!</button>
         </div>
     </div>
@@ -521,9 +521,8 @@
         let currentStar = 0;
         let currentQuiz = {};
         let isDoubleChance = false;
-        let legendInventory = []; // 22성 완성 무기 인벤토리 목록
+        let legendInventory = []; 
 
-        // 22개의 별 위치 좌표 (2줄 x 11개씩)
         const bigStarsGrid = [];
         for (let i = 0; i < MAX_STARS; i++) {
             const col = i % 11;
@@ -548,19 +547,15 @@
             generateQuiz();
         }
 
-        // ⭐ 22성 다 만들고 새로 도전할 때 호출되는 리셋 함수 ⭐
         function restartGame() {
-            // 22성 무기 보관함에 추가
             legendInventory.push({
                 title: `${playerName}의 제네시스 투핸드소드`,
                 img: "https://maplestory.io/api/KMS/352/item/1402259/icon"
             });
             renderInventory();
 
-            // 별 단계 0으로 리셋
             currentStar = 0;
 
-            // UI 및 문제 복구 및 새로운 문제 생성
             const quizPanel = document.getElementById('quizPanel');
             quizPanel.className = 'quiz-panel-right';
             quizPanel.innerHTML = `
@@ -597,7 +592,7 @@
             });
         }
 
-        // ⭐ 파괴 확률 조정 (16성 5% ~ 22성 20%) ⭐
+        // ⭐ 파괴 확률 조정 (16성 2.0% ~ 22성 10.0%) ⭐
         function getRates(star) {
             if (star >= MAX_STARS) return { success: 0, drop: 0, destroy: 0 };
 
@@ -618,17 +613,17 @@
                 13: { success: 65.0, drop: 35.0, destroy: 0.0 },
                 14: { success: 65.0, drop: 35.0, destroy: 0.0 },
                 15: { success: 65.0, drop: 35.0, destroy: 0.0 },
-                // 16성 이상 파괴 확률 상향! (최대 20%)
-                16: { success: 60.0, drop: 35.0, destroy: 5.0 },
-                17: { success: 58.0, drop: 35.0, destroy: 7.0 },
-                18: { success: 55.0, drop: 35.0, destroy: 10.0 },
-                19: { success: 53.0, drop: 35.0, destroy: 12.0 },
-                20: { success: 50.0, drop: 35.0, destroy: 15.0 },
-                21: { success: 47.0, drop: 35.0, destroy: 18.0 },
-                22: { success: 45.0, drop: 35.0, destroy: 20.0 }
+                // 16성 이상 파괴 확률 (최대 10% 제한)
+                16: { success: 60.0, drop: 38.0, destroy: 2.0 },
+                17: { success: 58.0, drop: 39.0, destroy: 3.0 },
+                18: { success: 56.0, drop: 40.0, destroy: 4.0 },
+                19: { success: 55.0, drop: 40.0, destroy: 5.0 },
+                20: { success: 54.0, drop: 40.0, destroy: 6.0 },
+                21: { success: 52.0, drop: 40.0, destroy: 8.0 },
+                22: { success: 50.0, drop: 40.0, destroy: 10.0 }
             };
 
-            let data = rateTable[star] || { success: 50, drop: 35, destroy: 15 };
+            let data = rateTable[star] || { success: 50, drop: 40, destroy: 10 };
             return data;
         }
 
@@ -654,6 +649,7 @@
             });
         }
 
+        // ⭐ 나눗셈 문제 및 오답 검증 로직 완벽 수정 ⭐
         function generateQuiz() {
             if (currentStar >= MAX_STARS) {
                 renderVictoryPanel();
@@ -663,7 +659,7 @@
             const is3D = Math.random() < 0.5;
             isDoubleChance = is3D;
 
-            const divisor = Math.floor(Math.random() * 8) + 2;
+            const divisor = Math.floor(Math.random() * 8) + 2; // 2 ~ 9
             const dividend = is3D ? Math.floor(Math.random() * 800) + 100 : Math.floor(Math.random() * 80) + 10;
 
             const q = Math.floor(dividend / divisor);
@@ -672,12 +668,19 @@
 
             let opts = new Set();
             opts.add(correctStr);
+
+            // 오답 4개 생성 시 무조건 검증
             while(opts.size < 5) {
-                let fq = q + (Math.floor(Math.random()*7) - 3);
-                let fr = r + (Math.floor(Math.random()*5) - 2);
-                if(fq < 0) fq = 0;
-                if(fr < 0 || fr >= divisor) fr = Math.max(0, divisor - 1);
-                opts.add(`몫: ${fq}, 나머지: ${fr}`);
+                let fq = q + (Math.floor(Math.random() * 7) - 3); // 몫 오차 (-3 ~ +3)
+                let fr = Math.floor(Math.random() * divisor);      // 나머지는 반드시 0 ~ divisor-1 사이
+
+                if (fq < 0) fq = 0;
+
+                let candidateStr = `몫: ${fq}, 나머지: ${fr}`;
+                // 정답과 완전히 일치하는 오답이 들어가지 않도록 철저히 차단
+                if (candidateStr !== correctStr) {
+                    opts.add(candidateStr);
+                }
             }
 
             currentQuiz = {
@@ -693,7 +696,7 @@
             const chanceBanner = document.getElementById('chanceBanner');
             const quizWarn = document.getElementById('quizWarn');
 
-            if (!quizWarn) return; // 22성 완료 상태 제외
+            if (!quizWarn) return;
 
             quizPanel.classList.remove('victory-mode');
             quizWarn.style.display = 'block';
@@ -814,7 +817,6 @@
                 let rand = Math.random() * 100;
 
                 if (rand < rates.success) {
-                    // 성공
                     let gainStars = isDoubleChance ? 2 : 1;
                     currentStar = Math.min(MAX_STARS, currentStar + gainStars);
                     hammer.innerText = isDoubleChance ? '⚡' : '🌟';
@@ -824,14 +826,12 @@
                         ? `대박 정답! 세 자리 수 문제를 해결해 ★ ${currentStar}성까지 2단계 승급했어요! 🎉`
                         : `정답! ★ ${currentStar}성으로 하늘에 커다란 별이 새로 생겼어요!`;
                 } else if (rand < rates.success + rates.destroy) {
-                    // 💥 파괴 발생
                     currentStar = 0;
                     hammer.innerText = '💥';
                     title.innerText = '장비 파괴!';
                     title.style.color = '#7f8c8d';
                     desc.innerText = `아쿠! 강력한 기운을 견디지 못하고 장비가 파괴되어 ★ 0성(초보자의 목검)으로 재시작합니다!`;
                 } else {
-                    // 단계 하락
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
                     title.innerText = '틀렸어요! (단계 하락)';
@@ -850,7 +850,6 @@
             document.getElementById('sfModal').style.display = 'none';
         }
 
-        // 🌟 5각 황금 왕별 벡터 그리기
         function drawVectorStar(cx, cy, spikes, outerRadius, innerRadius) {
             let rot = Math.PI / 2 * 3;
             let x = cx;
@@ -874,13 +873,11 @@
             ctx.closePath();
         }
 
-        // 🎨 캔버스 밤하늘 연출
         let animOffset = 0;
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             animOffset += 0.05;
 
-            // 1. 🌌 신비로운 밤하늘 배경
             let nightGrad = ctx.createLinearGradient(0, 0, 0, 130);
             nightGrad.addColorStop(0, '#0a0f24');
             nightGrad.addColorStop(0.6, '#151c3d');
@@ -888,7 +885,6 @@
             ctx.fillStyle = nightGrad;
             ctx.fillRect(0, 0, canvas.width, 130);
 
-            // 2. 🌟 5각 황금 왕별
             for (let i = 0; i < currentStar; i++) {
                 let pos = bigStarsGrid[i];
                 let pulse = Math.sin(animOffset * 3 + i) * 1.5;
@@ -911,7 +907,6 @@
                 ctx.restore();
             }
 
-            // 3. 우측 달님
             ctx.save();
             ctx.fillStyle = "#fffde7";
             ctx.shadowColor = "#fff59d";
@@ -920,7 +915,6 @@
             ctx.fillText('🌙', canvas.width - 40, 30);
             ctx.restore();
 
-            // 4. 밤나무 실루엣
             ctx.fillStyle = '#2d1b0e';
             ctx.fillRect(90, 60, 18, 70);
             ctx.fillStyle = '#1e3a29';
@@ -931,13 +925,11 @@
             ctx.fillStyle = '#143622';
             ctx.beginPath(); ctx.arc(canvas.width - 100, 42, 38, 0, Math.PI * 2); ctx.fill();
 
-            // 5. 밤 풀밭
             ctx.fillStyle = '#1e3a29';
             ctx.fillRect(0, 130, canvas.width, 60);
             ctx.fillStyle = '#143622';
             ctx.fillRect(0, 130, canvas.width, 10);
 
-            // 6. 치이카와 캐릭터 연출
             const cx = canvas.width / 2;
             const cy = 100 + Math.sin(animOffset) * 3;
 
