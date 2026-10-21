@@ -177,14 +177,15 @@
             font-weight: bold;
         }
 
+        /* 성공 및 하락 2개만 깔끔하게 표시 */
         .rates-box-compact {
             width: 100%;
-            font-size: 13px;
+            font-size: 14px;
             background: #eaeded;
-            padding: 6px 10px;
+            padding: 6px 16px;
             border-radius: 8px;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             margin-top: 4px;
             color: #2c3e50;
         }
@@ -451,11 +452,10 @@
                     <div class="stars-container" id="starsBox"></div>
                     <div class="stars-count-txt" id="starTxt">★ 0 / 22성</div>
 
-                    <!-- 성공 / 하락 / 파괴 확률 -->
+                    <!-- 파괴 글자 삭제! 성공과 하락만 표기 -->
                     <div class="rates-box-compact">
                         <span>성공: <b id="sucRate" style="color:#27ae60;">98.0%</b></span>
                         <span>하락: <b id="dropRate" style="color:#e67e22;">2.0%</b></span>
-                        <span>파괴: <b id="destRate" style="color:#c0392b;">0.0%</b></span>
                     </div>
                 </div>
 
@@ -487,7 +487,6 @@
             <div class="hammer">🌟</div>
             <h2 style="color:#d35400; font-size:20px;">모험가 이름을 입력하세요!</h2>
             <div style="font-size:13px; color:#34495e; margin-top:5px;">내 이름이 들어간 무기를 강화해보세요!</div>
-            <!-- 요청에 따라 예시 이름을 '이민형'으로 교체 -->
             <input type="text" id="userNameInput" class="name-input" placeholder="예: 이민형" maxlength="8">
             <button class="m-btn" onclick="startAdventure()">모험 시작하기!</button>
         </div>
@@ -507,7 +506,6 @@
         const MAX_STARS = 22;
         let playerName = "용사";
 
-        // ⭐ 이미지 경로가 안전하게 검증된 다양한 무기 풀 ⭐
         const weaponPools = [
             {
                 type: "두손검",
@@ -590,7 +588,6 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // 이미지 로딩 실패 시 예쁜 이모지로 대치하는 함수
         function handleImgError(imgEl) {
             imgEl.style.display = 'none';
             if (imgEl.parentElement) {
@@ -664,36 +661,37 @@
             });
         }
 
+        // ⭐ 파괴 완전 제거! 성공과 하락 비율만 존재 ⭐
         function getRates(star) {
-            if (star >= MAX_STARS) return { success: 0, drop: 0, destroy: 0 };
+            if (star >= MAX_STARS) return { success: 0, drop: 0 };
 
             const rateTable = {
-                0:  { success: 98.0, drop: 2.0, destroy: 0.0 },
-                1:  { success: 95.0, drop: 5.0, destroy: 0.0 },
-                2:  { success: 92.0, drop: 8.0, destroy: 0.0 },
-                3:  { success: 90.0, drop: 10.0, destroy: 0.0 },
-                4:  { success: 88.0, drop: 12.0, destroy: 0.0 },
-                5:  { success: 85.0, drop: 15.0, destroy: 0.0 },
-                6:  { success: 83.0, drop: 17.0, destroy: 0.0 },
-                7:  { success: 80.0, drop: 20.0, destroy: 0.0 },
-                8:  { success: 78.0, drop: 22.0, destroy: 0.0 },
-                9:  { success: 75.0, drop: 25.0, destroy: 0.0 },
-                10: { success: 73.0, drop: 27.0, destroy: 0.0 },
-                11: { success: 70.0, drop: 30.0, destroy: 0.0 },
-                12: { success: 68.0, drop: 32.0, destroy: 0.0 },
-                13: { success: 65.0, drop: 35.0, destroy: 0.0 },
-                14: { success: 65.0, drop: 35.0, destroy: 0.0 },
-                15: { success: 65.0, drop: 35.0, destroy: 0.0 },
-                16: { success: 60.0, drop: 38.0, destroy: 2.0 },
-                17: { success: 58.0, drop: 39.0, destroy: 3.0 },
-                18: { success: 56.0, drop: 40.0, destroy: 4.0 },
-                19: { success: 55.0, drop: 40.0, destroy: 5.0 },
-                20: { success: 54.0, drop: 40.0, destroy: 6.0 },
-                21: { success: 52.0, drop: 40.0, destroy: 8.0 },
-                22: { success: 50.0, drop: 40.0, destroy: 10.0 }
+                0:  { success: 98.0, drop: 2.0 },
+                1:  { success: 95.0, drop: 5.0 },
+                2:  { success: 92.0, drop: 8.0 },
+                3:  { success: 90.0, drop: 10.0 },
+                4:  { success: 88.0, drop: 12.0 },
+                5:  { success: 85.0, drop: 15.0 },
+                6:  { success: 83.0, drop: 17.0 },
+                7:  { success: 80.0, drop: 20.0 },
+                8:  { success: 78.0, drop: 22.0 },
+                9:  { success: 75.0, drop: 25.0 },
+                10: { success: 73.0, drop: 27.0 },
+                11: { success: 70.0, drop: 30.0 },
+                12: { success: 68.0, drop: 32.0 },
+                13: { success: 65.0, drop: 35.0 },
+                14: { success: 65.0, drop: 35.0 },
+                15: { success: 65.0, drop: 35.0 },
+                16: { success: 60.0, drop: 40.0 },
+                17: { success: 58.0, drop: 42.0 },
+                18: { success: 56.0, drop: 44.0 },
+                19: { success: 55.0, drop: 45.0 },
+                20: { success: 54.0, drop: 46.0 },
+                21: { success: 52.0, drop: 48.0 },
+                22: { success: 50.0, drop: 50.0 }
             };
 
-            let data = rateTable[star] || { success: 50, drop: 40, destroy: 10 };
+            let data = rateTable[star] || { success: 50, drop: 50 };
             return data;
         }
 
@@ -816,7 +814,6 @@
             document.getElementById('topStarBadge').innerText = `★ ${currentStar} / ${MAX_STARS}성`;
             document.getElementById('sucRate').innerText = `${rates.success.toFixed(1)}%`;
             document.getElementById('dropRate').innerText = `${rates.drop.toFixed(1)}%`;
-            document.getElementById('destRate').innerText = `${rates.destroy.toFixed(1)}%`;
 
             let curWeapon = currentWeaponPool.tiers[0];
             for(let w of currentWeaponPool.tiers) {
@@ -894,12 +891,6 @@
                     desc.innerText = isDoubleChance 
                         ? `대박 정답! 세 자리 수 문제를 해결해 ★ ${currentStar}성까지 2단계 승급했어요! 🎉`
                         : `정답! ★ ${currentStar}성으로 하늘에 커다란 별이 새로 생겼어요!`;
-                } else if (rand < rates.success + rates.destroy) {
-                    currentStar = 0;
-                    hammer.innerText = '💥';
-                    title.innerText = '장비 파괴!';
-                    title.style.color = '#7f8c8d';
-                    desc.innerText = `아쿠! 강력한 기운을 견디지 못하고 장비가 파괴되어 ★ 0성으로 재시작합니다!`;
                 } else {
                     currentStar = Math.max(0, currentStar - 1);
                     hammer.innerText = '💧';
