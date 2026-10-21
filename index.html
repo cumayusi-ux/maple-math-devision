@@ -119,6 +119,7 @@
             justify-content: center;
             margin: 4px 0;
             box-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
+            font-size: 32px;
         }
 
         .item-preview img {
@@ -134,7 +135,7 @@
             text-align: center;
         }
 
-        /* 22개 별 슬롯 (4-4-4-4-4-2 띄어쓰기) */
+        /* 22개 별 슬롯 */
         .stars-container {
             display: flex;
             flex-wrap: wrap;
@@ -201,14 +202,12 @@
             transition: all 0.3s;
         }
 
-        /* 더블 타임 찬스 이벤트 스타일 */
         .quiz-panel-right.double-mode {
             background: #fffde7;
             border: 3px solid #f1c40f;
             box-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
         }
 
-        /* 22성 최종 달성 모드 */
         .quiz-panel-right.victory-mode {
             background: linear-gradient(135deg, #fffde7, #fff3e0);
             border: 4px solid #f1c40f;
@@ -280,7 +279,7 @@
             100% { transform: translateX(0); }
         }
 
-        /* 3. 🏆 22성 전설 보관함 인벤토리 */
+        /* 3. 🏆 22성 전설 보관함 */
         .inventory-box {
             background: #ffffff;
             border: 3px solid #8e44ad;
@@ -324,6 +323,7 @@
             position: relative;
             box-shadow: 0 0 6px rgba(241, 196, 15, 0.5);
             flex-shrink: 0;
+            font-size: 20px;
         }
 
         .inv-item img {
@@ -443,11 +443,11 @@
                 <!-- 좌측: 강화 카드 -->
                 <div class="sf-card-left">
                     <div class="item-title" id="itemName">초보자의 무기</div>
-                    <div class="item-preview">
-                        <img id="itemImg" src="https://maplestory.io/api/KMS/352/item/1302000/icon" alt="무기">
+                    <div class="item-preview" id="itemPreviewBox">
+                        <img id="itemImg" src="" alt="무기" onerror="handleImgError(this)">
                     </div>
 
-                    <!-- 22개 별 슬롯 (4-4-4-4-4-2 띄어쓰기) -->
+                    <!-- 22개 별 슬롯 -->
                     <div class="stars-container" id="starsBox"></div>
                     <div class="stars-count-txt" id="starTxt">★ 0 / 22성</div>
 
@@ -459,7 +459,7 @@
                     </div>
                 </div>
 
-                <!-- 우측: 나눗셈 문제 패널 (22성 달성 시 축하 화면 변환) -->
+                <!-- 우측: 나눗셈 문제 패널 -->
                 <div class="quiz-panel-right" id="quizPanel">
                     <div id="chanceBanner" class="chance-banner">⚡ [세 자리 수 도전!] 찬스타임! 맞히면 +2성 승급! ⚡</div>
                     <div id="quizWarn" style="font-size: 13px; color: #c0392b; font-weight: bold;">⚠️ 오답 시 단계가 하락할 수 있으니 신중히 푸세요!</div>
@@ -468,7 +468,7 @@
                 </div>
             </div>
 
-            <!-- 3. 🏆 22성 전설 보관함 (인벤토리) -->
+            <!-- 3. 🏆 22성 전설 보관함 -->
             <div class="inventory-box">
                 <div class="inv-header">
                     <span>🏆 22성 전설 보관함</span>
@@ -487,6 +487,7 @@
             <div class="hammer">🌟</div>
             <h2 style="color:#d35400; font-size:20px;">모험가 이름을 입력하세요!</h2>
             <div style="font-size:13px; color:#34495e; margin-top:5px;">내 이름이 들어간 무기를 강화해보세요!</div>
+            <!-- 요청에 따라 예시 이름을 '이민형'으로 교체 -->
             <input type="text" id="userNameInput" class="name-input" placeholder="예: 이민형" maxlength="8">
             <button class="m-btn" onclick="startAdventure()">모험 시작하기!</button>
         </div>
@@ -506,10 +507,11 @@
         const MAX_STARS = 22;
         let playerName = "용사";
 
-        // ⭐ 여러 가지 무기 종류 풀(Pool) 정의 (두손검, 완드/스태프, 활, 단검, 폴암 등) ⭐
+        // ⭐ 이미지 경로가 안전하게 검증된 다양한 무기 풀 ⭐
         const weaponPools = [
             {
                 type: "두손검",
+                iconEmoji: "🗡️",
                 tiers: [
                     { level: 0, name: "초보자의 목검", img: "https://maplestory.io/api/KMS/352/item/1302000/icon" },
                     { level: 3, name: "하이랜더", img: "https://maplestory.io/api/KMS/352/item/1402002/icon" },
@@ -523,12 +525,13 @@
                 ]
             },
             {
-                type: "완드/스태프",
+                type: "완드",
+                iconEmoji: "🪄",
                 tiers: [
                     { level: 0, name: "초보자의 완드", img: "https://maplestory.io/api/KMS/352/item/1372000/icon" },
                     { level: 3, name: "서클로드", img: "https://maplestory.io/api/KMS/352/item/1372002/icon" },
                     { level: 6, name: "엠스틱", img: "https://maplestory.io/api/KMS/352/item/1372005/icon" },
-                    { level: 9, name: "레이븐완드", img: "https://maplestory.io/api/KMS/352/item/1372030/icon" },
+                    { level: 9, name: "마법의 완드", img: "https://maplestory.io/api/KMS/352/item/1372010/icon" },
                     { level: 12, name: "드래곤 완드", img: "https://maplestory.io/api/KMS/352/item/1372015/icon" },
                     { level: 15, name: "우트가르드 완드", img: "https://maplestory.io/api/KMS/352/item/1372213/icon" },
                     { level: 18, name: "파프니르 마나리첼", img: "https://maplestory.io/api/KMS/352/item/1372183/icon" },
@@ -538,13 +541,14 @@
             },
             {
                 type: "활",
+                iconEmoji: "🏹",
                 tiers: [
                     { level: 0, name: "초보자의 활", img: "https://maplestory.io/api/KMS/352/item/1452000/icon" },
-                    { level: 3, name: "자이벤", img: "https://maplestory.io/api/KMS/352/item/1452002/icon" },
-                    { level: 6, name: "아쳐론", img: "https://maplestory.io/api/KMS/352/item/1452005/icon" },
-                    { level: 9, name: "금강표창(활)", img: "https://maplestory.io/api/KMS/352/item/1452009/icon" },
+                    { level: 3, name: "사냥꾼의 활", img: "https://maplestory.io/api/KMS/352/item/1452001/icon" },
+                    { level: 6, name: "자이벤", img: "https://maplestory.io/api/KMS/352/item/1452002/icon" },
+                    { level: 9, name: "아쳐론", img: "https://maplestory.io/api/KMS/352/item/1452005/icon" },
                     { level: 12, name: "드래곤 윈드윙", img: "https://maplestory.io/api/KMS/352/item/1452016/icon" },
-                    { level: 15, name: "우트가르드 숏보우", img: "https://maplestory.io/api/KMS/352/item/1452213/icon" },
+                    { level: 15, name: "우트가르드 보우", img: "https://maplestory.io/api/KMS/352/item/1452213/icon" },
                     { level: 18, name: "파프니르 윈드체이서", img: "https://maplestory.io/api/KMS/352/item/1452184/icon" },
                     { level: 20, name: "아케인셰이드 보우", img: "https://maplestory.io/api/KMS/352/item/1452239/icon" },
                     { level: 22, name: "제네시스 보우", img: "https://maplestory.io/api/KMS/352/item/1452243/icon" }
@@ -552,25 +556,26 @@
             },
             {
                 type: "단검",
+                iconEmoji: "🗡️",
                 tiers: [
                     { level: 0, name: "초보자의 단검", img: "https://maplestory.io/api/KMS/352/item/1332000/icon" },
                     { level: 3, name: "가드서", img: "https://maplestory.io/api/KMS/352/item/1332002/icon" },
                     { level: 6, name: "제스코", img: "https://maplestory.io/api/KMS/352/item/1332007/icon" },
                     { level: 9, name: "사브르", img: "https://maplestory.io/api/KMS/352/item/1332010/icon" },
                     { level: 12, name: "드래곤 K", img: "https://maplestory.io/api/KMS/352/item/1332023/icon" },
-                    { level: 15, name: "우트가르드 크리스", img: "https://maplestory.io/api/KMS/352/item/1332223/icon" },
+                    { level: 15, name: "우트가르드 대거", img: "https://maplestory.io/api/KMS/352/item/1332223/icon" },
                     { level: 18, name: "파프니르 리스크레서", img: "https://maplestory.io/api/KMS/352/item/1332193/icon" },
-                    { level: 20, name: "아케인셰이드 세이버", img: "https://maplestory.io/api/KMS/352/item/1332252/icon" },
-                    { level: 22, name: "제네시스 엠블렘단검", img: "https://maplestory.io/api/KMS/352/item/1332256/icon" }
+                    { level: 20, name: "아케인셰이드 대거", img: "https://maplestory.io/api/KMS/352/item/1332252/icon" },
+                    { level: 22, name: "제네시스 대거", img: "https://maplestory.io/api/KMS/352/item/1332256/icon" }
                 ]
             }
         ];
 
-        let currentWeaponPool = weaponPools[0]; // 현재 플레이 중인 무기 종류
+        let currentWeaponPool = weaponPools[0];
         let currentStar = 0;
         let currentQuiz = {};
         let isDoubleChance = false;
-        let legendInventory = []; 
+        let legendInventory = [];
 
         const bigStarsGrid = [];
         for (let i = 0; i < MAX_STARS; i++) {
@@ -585,6 +590,14 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
+        // 이미지 로딩 실패 시 예쁜 이모지로 대치하는 함수
+        function handleImgError(imgEl) {
+            imgEl.style.display = 'none';
+            if (imgEl.parentElement) {
+                imgEl.parentElement.innerText = currentWeaponPool.iconEmoji || "⚔️";
+            }
+        }
+
         function startAdventure() {
             const inputVal = document.getElementById('userNameInput').value.trim();
             if (inputVal !== "") {
@@ -593,7 +606,6 @@
             document.getElementById('nameModal').style.display = 'none';
             document.getElementById('mainTitle').innerText = `🍁 ${playerName}의 나눗셈 정복 🍁`;
             
-            // 처음 시작할 때 랜덤 무기 종류 배정!
             pickRandomWeaponPool();
             updateUI();
             generateQuiz();
@@ -605,15 +617,14 @@
         }
 
         function restartGame() {
-            // 현재 완성한 22성 무기를 인벤토리에 추가
             let curWeapon = currentWeaponPool.tiers[currentWeaponPool.tiers.length - 1];
             legendInventory.push({
                 title: `${playerName}의 ${curWeapon.name}`,
-                img: curWeapon.img
+                img: curWeapon.img,
+                emoji: currentWeaponPool.iconEmoji
             });
             renderInventory();
 
-            // 별 단계 리셋 및 새로운 랜덤 무기 종류 배정!
             currentStar = 0;
             pickRandomWeaponPool();
 
@@ -646,7 +657,7 @@
                 div.className = 'inv-item';
                 div.title = `${item.title} #${idx + 1}`;
                 div.innerHTML = `
-                    <img src="${item.img}" alt="22성 전설">
+                    <img src="${item.img}" alt="22성 전설" onerror="this.style.display='none'; this.parentElement.innerText='${item.emoji}';">
                     <span class="badge">★22</span>
                 `;
                 invList.appendChild(div);
@@ -812,7 +823,9 @@
                 if(currentStar >= w.level) curWeapon = w;
             }
             document.getElementById('itemName').innerText = `${playerName}의 ${curWeapon.name} (${currentWeaponPool.type})`;
-            document.getElementById('itemImg').src = curWeapon.img;
+
+            const previewBox = document.getElementById('itemPreviewBox');
+            previewBox.innerHTML = `<img id="itemImg" src="${curWeapon.img}" alt="무기" onerror="handleImgError(this)">`;
         }
 
         function checkAnswer(selected, btnEl) {
